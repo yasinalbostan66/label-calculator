@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ETİKET HESAPLAMA ARACI</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <img src="icon-192.png" alt="Etiket Hesaplama" class="splash-logo">
+            <h1>ETİKET HESAPLAMA ARACI</h1>
+            <p>Yasin ALBOSTANLI 2026</p>
+        </div>
+    </div>
+
+    <div class="background-glow"></div>
+    <div class="container">
+        <header>
+            <h1>ETİKET GENEL BİLGİLERİ</h1>
+            <p class="subtitle">yasin albostanlı</p>
+        </header>
+
+        <div id="page-calculator" class="page-section active">
+            <main class="calculator-card">
+                <div class="card-actions">
+                    <button id="resetBtn" class="reset-button">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12" />
+                        </svg>
+                        Sıfırla
+                    </button>
+                </div>
+
+                <!-- Section 1: Dimensions & Quantity -->
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="labelWidth">Akış (mm)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="labelWidth" placeholder="Örn: 100" min="0">
+                            <span class="unit">mm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="flow">Ara Boşluğu (mm)</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="flow" placeholder="Örn: 3" min="0" value="3">
+                        <span class="unit">mm</span>
+                    </div>
+                    <small class="hint">Etiket arası boşluk genellikle 3mm'dir.</small>
+                </div>
+
+                <div class="input-group">
+                    <label for="zMeasure">Makine ZET Ölçüsü</label>
+                    <div class="input-wrapper">
+                        <select id="zMeasure">
+                            <option value="">Hesaplanıyor...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="quantity">Sipariş Adeti</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="quantity" placeholder="10000" min="0">
+                            <span class="unit">Adet</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="across">Yanyana</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="across" placeholder="1" min="1" value="1">
+                            <span class="unit">Adet</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Intermediate Results: Technical -->
+                <div class="intermediate-results">
+                    <div class="result-item">
+                        <span class="result-label">Toplam Vuruş</span>
+                        <div class="result-value" id="totalStrokes">0</div>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Toplam Metraj</span>
+                        <div class="result-value" id="totalLength">0 <span class="unit-small">m</span></div>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Toplam Alan</span>
+                        <div class="result-value" id="totalAreaM2">0 <span class="unit-small">m²</span></div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Production Speed & Ink -->
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="speed">Makine Hızı</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="speed" placeholder="50" min="1">
+                            <span class="unit">m/dk</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Intermediate Results: Production -->
+                <div class="intermediate-results">
+                    <div class="result-item">
+                        <span class="result-label">Tahmini Süre</span>
+                        <div class="result-value" id="totalTime">0 <span class="unit-small">dk</span></div>
+                    </div>
+                </div>
+
+                <button id="goToPaperBtn" class="action-button full-width">
+                    İş Emrine Git &rarr;
+                </button>
+
+            </main>
+        </div>
+
+        <!-- Page 3: Paper Calculation -->
+        <div id="page-paper-cost" class="page-section hidden">
+            <main class="calculator-card">
+                <button id="backToCalcBtn" class="reset-button"
+                    style="position:relative; margin-bottom:1rem; right:auto; top:auto;">
+                    &larr; Geri Dön
+                </button>
+
+                <h2>İş Emri</h2>
+
+                <div class="input-group">
+                    <label for="jobName">İşin Adı</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="jobName" placeholder="Örn: Firma / Ürün Adı">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="colorOption">Renk Seçeneği</label>
+                    <div class="input-wrapper">
+                        <select id="colorOption">
+                            <option value="CMYK">CMYK</option>
+                            <option value="WCMYK">WCMYK</option>
+                            <option value="WCMYK+OVG">WCMYK+OVG</option>
+                            <option value="WCMYK+LAK">WCMYK+LAK</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="materialType">Malzeme Cinsi</label>
+                    <div class="input-wrapper">
+                        <select id="materialType">
+                            <option value="Kuşe">Kuşe</option>
+                            <option value="Termal">Termal (Eko)</option>
+                            <option value="Lamine Termal">Lamine Termal</option>
+                            <option value="PP Opak">PP Opak</option>
+                            <option value="PP Şeffaf">PP Şeffaf</option>
+                            <option value="PE Opak">PE Opak</option>
+                            <option value="PE Şeffaf">PE Şeffaf</option>
+                            <option value="Silver Mat">Silver Mat (Demirbaş)</option>
+                            <option value="Whitetop">Whitetop (Vellum)</option>
+                            <option value="Metalize">Metalize</option>
+                            <option value="Kuşe (Pet)">Kuşe (Pet)</option>
+                            <option value="Fast Tyre">Fast Tyre (Kuşe)</option>
+                            <option value="Saten">Saten (Kumaş)</option>
+                            <option value="Japon Akmaz">Japon Akmaz</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="materialPrice">Malzeme Fiyatı (m²)</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="materialPrice" placeholder="Örn: 1.50" min="0" step="0.01">
+                        <span class="unit">€</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Malzeme Toplam Tutar</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="totalMaterialCost" readonly value="0.00">
+                        <span class="unit">€</span>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+        <footer style="text-align: center; margin-top: 20px;">
+            <p>&copy; 2026 Etiket Pro</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
+</body>
+
+</html>
