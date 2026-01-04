@@ -2,220 +2,1308 @@
 <html lang="tr">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ETİKET HESAPLAMA ARACI</title>
-    <link rel="manifest" href="manifest.json">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Matbaa Portalı | Maliyet Hesaplama Araçları</title>
+    <meta name="description" content="Profesyonel Matbaa Maliyet Hesaplama Araçları" />
+
+    <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <script src="https://unpkg.com/feather-icons"></script>
+    <!-- ExcelJS & FileSaver for robust Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        /* Global Layout */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 5%;
+        }
+
+        /* Utility */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Header Enhancements */
+        .header {
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-left: auto;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        /* Live Rates */
+        .live-rates {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            padding: 0.5rem 1rem;
+            background: rgba(var(--primary-rgb), 0.05);
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            height: 40px;
+            align-items: center;
+        }
+
+        /* Theme Controls in Header */
+        .theme-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            background: var(--bg-surface);
+            padding: 0 0.5rem;
+            border-radius: 2rem;
+            border: 1px solid var(--border);
+            height: 40px;
+        }
+
+        .theme-group {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .mode-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            padding: 6px;
+            border-radius: 50%;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mode-btn:hover {
+            color: var(--text-main);
+            background: var(--bg-body);
+        }
+
+        .mode-btn.active {
+            color: var(--primary);
+            background: rgba(var(--primary-rgb), 0.1);
+        }
+
+
+
+        /* Header Time Display */
+        .header-time-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-main);
+            font-variant-numeric: tabular-nums;
+            font-weight: 500;
+            font-size: 0.9rem;
+            background: var(--bg-surface);
+            padding: 0 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            height: 40px;
+        }
+
+        /* Radio Styling */
+        .radio-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-right: 8px;
+            border-right: 1px solid var(--border);
+            margin-right: 4px;
+        }
+
+
+
+        /* Hero Section */
+        .home-hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .home-hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+
+        .home-hero p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 1.5rem auto;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            width: 100%;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 5%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .nav-list {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            gap: 2rem;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 0;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary);
+        }
+
+        .nav-link.active {
+            border-bottom-color: var(--primary);
+        }
+
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 220px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 0.5rem 0;
+            z-index: 100;
+        }
+
+        .winding-directions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .winding-option {
+            position: relative;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 6px;
+            text-align: center;
+            transition: all 0.2s;
+            background: var(--bg-surface);
+        }
+
+        .winding-option:hover {
+            border-color: var(--primary);
+            background: rgba(var(--primary-rgb), 0.02);
+            transform: translateY(-2px);
+        }
+
+        .winding-option.active {
+            border-color: var(--primary);
+            background: rgba(var(--primary-rgb), 0.05);
+            box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
+        }
+
+        .winding-icon {
+            width: 100%;
+            height: 85px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .winding-icon svg {
+            width: 100%;
+            height: 75px;
+            stroke: var(--text-muted);
+            fill: none;
+        }
+
+        .winding-option.active .winding-icon svg {
+            stroke: var(--primary);
+        }
+
+        .winding-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            line-height: 1.2;
+            display: block;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        .winding-option.active .winding-label {
+            color: var(--primary);
+        }
+
+        .winding-option input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        @media (max-width: 600px) {
+            .winding-directions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .nav-item:hover .dropdown-menu {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: background 0.1s;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background: var(--bg-body);
+            color: var(--primary);
+        }
+
+        .page-view {
+            display: none;
+            animation: fadeIn 0.3s ease;
+            width: 100%;
+        }
+
+        @media print {
+            #print-winding-visual svg {
+                width: 120px !important;
+                height: 80px !important;
+                stroke: #334155 !important;
+                fill: none !important;
+            }
+
+            #print-winding-visual svg rect {
+                fill: #3b82f6 !important;
+            }
+
+            #print-winding-visual svg text {
+                fill: white !important;
+                font-weight: bold !important;
+            }
+        }
+
+        .page-view.active {
+            display: block;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .tool-card-link {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .tool-card-link:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .tool-icon-large {
+            width: 64px;
+            height: 64px;
+            background: rgba(var(--primary-rgb), 0.1);
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .tool-card-link h3 {
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .tool-card-link p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Exisiting Calc Styles */
+        .calculator-container {
+            margin: 2rem auto;
+        }
+
+        .form-row.thirds .form-group {
+            margin-right: 1rem;
+        }
+
+        .form-row.thirds .form-group:last-child {
+            margin-right: 0;
+        }
+
+        .shape-switcher {
+            display: flex;
+            background: var(--bg-body);
+            padding: 4px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+        }
+
+        .shape-option {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .shape-option.active {
+            background: var(--bg-surface);
+            color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .shape-option input {
+            display: none;
+        }
+
+        /* Box Drawing */
+        .drawing-container {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .box-svg {
+            max-width: 100%;
+            height: auto;
+            max-height: 150px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 900px) {
+
+            .live-rates,
+            .theme-controls {
+                display: none;
+            }
+
+            .header {
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 
-<body>
-    <!-- Splash Screen -->
-    <div id="splash-screen" class="splash-screen">
-        <div class="splash-content">
-            <img src="icon-192.png" alt="Etiket Hesaplama" class="splash-logo">
-            <h1>ETİKET HESAPLAMA ARACI</h1>
-            <p>Yasin ALBOSTANLI 2026</p>
+<body class="light">
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-container">
+            <div class="logo-bg"><i data-feather="printer" class="logo-icon-white"></i></div>
+            <span class="logo-text">Matbaa<span class="highlight">Portalı</span></span>
+        </div>
+
+        <!-- Header Right Section: Aligned Items -->
+        <div class="header-right">
+            <!-- Live Rates -->
+            <div id="live-rates-display" class="live-rates" title="Canlı Döviz Kurları">
+                <div class="rate-item"><span style="opacity:0.6;">Yükleniyor...</span></div>
+            </div>
+            <!-- Theme Mode Controls -->
+            <div class="theme-controls" title="Görünüm Modu">
+                <div class="theme-group">
+                    <button class="mode-btn active" id="btn-light" title="Aydınlık Mod"><i data-feather="sun"
+                            width="20"></i></button>
+                    <button class="mode-btn" id="btn-dark" title="Karanlık Mod"><i data-feather="moon"
+                            width="20"></i></button>
+                </div>
+            </div>
+            <!-- Date/Time & Radio Display -->
+            <div class="header-time-container">
+
+                <i data-feather="clock" style="width:16px;"></i>
+                <span id="header-time" style="font-size:0.85rem;">...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a class="nav-link active" onclick="switchPage('home')">
+                    <i data-feather="home"></i> Anasayfa
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link">
+                    <i data-feather="grid"></i> Hesaplayıcılar <i data-feather="chevron-down" style="width:16px;"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" onclick="switchPage('label-calculator')">
+                        <i data-feather="tag"
+                            style="width:16px; margin-right:8px; display:inline-block; vertical-align:middle;"></i>
+                        Etiket Fiyat Hesaplayıcı
+                    </a>
+                    <a class="dropdown-item" onclick="switchPage('box-calculator')">
+                        <i data-feather="package"
+                            style="width:16px; margin-right:8px; display:inline-block; vertical-align:middle;"></i>
+                        Karton Kutu Hesaplayıcı
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Areas -->
+    <main class="main-content">
+
+        <!-- VIEW: HOME -->
+        <section id="view-home" class="page-view active">
+            <div class="home-hero">
+                <h1>Matbaa Portalı</h1>
+                <p>Üretim süreçlerinizi hızlandıracak profesyonel araçlar.</p>
+            </div>
+
+            <div class="tools-grid">
+                <div class="tool-card-link" onclick="switchPage('label-calculator')">
+                    <div class="tool-icon-large"><i data-feather="tag" width="32" height="32"></i></div>
+                    <h3>Etiket Fiyat Hesaplayıcı</h3>
+                    <p>Rulo etiket maliyetlerinizi malzeme, işçilik ve döviz kurlarını kullanarak saniyeler içinde
+                        hesaplayın.</p>
+                </div>
+
+                <div class="tool-card-link" onclick="switchPage('box-calculator')">
+                    <div class="tool-icon-large"><i data-feather="package" width="32" height="32"></i></div>
+                    <h3>Karton Kutu Hesaplayıcı</h3>
+                    <p>Amerikan Bristol, Oluklu Mukavva ve Kroma Karton kutu maliyetlerinizi açık ebat ölçüleriyle
+                        kolayca hesaplayın.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: LABEL CALCULATOR -->
+        <section id="view-label-calculator" class="page-view">
+            <div class="calculator-container">
+                <div class="tool-card calculator-card">
+                    <div class="tool-header">
+                        <div class="icon-box"><i data-feather="tag"></i></div>
+                        <h3>Etiket Fiyat Hesaplayıcı</h3>
+                        <button id="reset-btn" type="button" class="btn btn-sm btn-outline"
+                            style="margin-left: auto; border: 1px solid var(--border); color: var(--text-muted);"
+                            title="Formu Sıfırla">
+                            <i data-feather="rotate-ccw"></i> Sıfırla
+                        </button>
+                    </div>
+
+                    <form id="etiket-form" class="calculator-form">
+
+                        <!-- Job Info -->
+                        <!-- Job Info -->
+                        <div class="form-group">
+                            <label for="job-name">Firma / İşin Adı</label>
+                            <input type="text" id="job-name" placeholder="Örn: ABC Tekstil - Yazlık Etiket" />
+                        </div>
+                        <div class="form-group">
+                            <label for="print-type">Baskı Türü</label>
+                            <select id="print-type" class="form-select">
+                                <option value="Digital">Digital</option>
+                                <option value="Flekso">Flekso</option>
+                                <option value="Ofset">Ofset</option>
+                            </select>
+                        </div>
+
+                        <!-- Shape Switcher -->
+                        <div class="shape-switcher">
+                            <label class="shape-option active" id="shape-rect-label">
+                                <input type="radio" name="shape" value="rect" checked onchange="toggleShape('rect')">
+                                <i data-feather="square" style="width:14px; vertical-align:middle;"></i> Kare /
+                                Dikdörtgen
+                            </label>
+                            <label class="shape-option" id="shape-circle-label">
+                                <input type="radio" name="shape" value="circle" onchange="toggleShape('circle')">
+                                <i data-feather="circle" style="width:14px; vertical-align:middle;"></i> Yuvarlak (Çap)
+                            </label>
+                        </div>
+
+                        <!-- Input Group: Rectangle -->
+                        <div id="inputs-rect" class="form-row">
+                            <div class="form-group half">
+                                <label for="length">Uzunluk (mm) (Akış Yönü)</label>
+                                <input type="number" id="length" min="1" placeholder="100" />
+                            </div>
+                            <div class="form-group half">
+                                <label for="width">Genişlik (mm)</label>
+                                <input type="number" id="width" min="1" placeholder="50" />
+                            </div>
+                        </div>
+
+                        <!-- Input Group: Circle -->
+                        <div id="inputs-circle" class="form-row hidden">
+                            <div class="form-group" style="width:100%;">
+                                <label for="diameter">Etiket Çapı (mm)</label>
+                                <input type="number" id="diameter" min="1" placeholder="50" />
+                            </div>
+                        </div>
+
+                        <div class="form-row thirds" style="display:flex;">
+                            <div class="form-group" style="flex:1;">
+                                <label for="gap">Ara Boşluk (mm)</label>
+                                <input type="number" id="gap" min="0" placeholder="3" value="3" required />
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <label for="across">Yan Yana (Adet)</label>
+                                <input type="number" id="across" min="1" placeholder="1" value="1" required />
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <label for="vertical">Alt Alta (Adet)</label>
+                                <input type="number" id="vertical" min="1" placeholder="1" value="1" required />
+                            </div>
+                        </div>
+
+                        <!-- Winding Direction (Sarım Yönü) -->
+                        <div class="form-group">
+                            <label style="font-weight:600; margin-bottom:12px; display:block;">Sarım Yönü
+                                (Pozisyon)</label>
+                            <div class="winding-directions" id="winding-container">
+                                <!-- Pozisyon 1: Kafa Dış -->
+                                <label class="winding-option active" onclick="selectWinding(1)">
+                                    <input type="radio" name="winding" value="1" checked>
+                                    <div class="winding-icon">
+                                        <svg viewBox="0 0 60 40">
+                                            <!-- Roll -->
+                                            <circle cx="20" cy="20" r="12" fill="#f1f5f9" stroke="#94a3b8"
+                                                stroke-width="1.5" />
+                                            <circle cx="20" cy="20" r="4" fill="#cbd5e1" stroke="#94a3b8"
+                                                stroke-width="1" />
+                                            <!-- Web (Top Unwind) -->
+                                            <line x1="20" y1="8" x2="55" y2="8" stroke="#64748b" stroke-width="2" />
+                                            <!-- Label -->
+                                            <rect x="35" y="3" width="12" height="10" fill="var(--primary)" rx="1" />
+                                            <text x="41" y="11" font-size="8" font-weight="bold" text-anchor="middle"
+                                                fill="white" font-family="Arial">A</text>
+                                            <!-- Unwind Arrow -->
+                                            <path d="M12 12 A10 10 0 0 1 20 10" stroke="#10b981" stroke-width="2"
+                                                fill="none" marker-end="url(#arrow-head)" />
+                                        </svg>
+                                    </div>
+                                    <span class="winding-label">1. Kafa Dış</span>
+                                </label>
+                                <!-- Pozisyon 2: Ayak Dış -->
+                                <label class="winding-option" onclick="selectWinding(2)">
+                                    <input type="radio" name="winding" value="2">
+                                    <div class="winding-icon">
+                                        <svg viewBox="0 0 60 40">
+                                            <circle cx="20" cy="20" r="12" fill="#f1f5f9" stroke="#94a3b8"
+                                                stroke-width="1.5" />
+                                            <circle cx="20" cy="20" r="4" fill="#cbd5e1" stroke="#94a3b8"
+                                                stroke-width="1" />
+                                            <line x1="20" y1="8" x2="55" y2="8" stroke="#64748b" stroke-width="2" />
+                                            <rect x="35" y="3" width="12" height="10" fill="var(--primary)" rx="1" />
+                                            <text x="41" y="11" font-size="8" font-weight="bold" text-anchor="middle"
+                                                fill="white" font-family="Arial"
+                                                transform="rotate(180, 41, 10)">A</text>
+                                            <path d="M12 12 A10 10 0 0 1 20 10" stroke="#10b981" stroke-width="2"
+                                                fill="none" marker-end="url(#arrow-head)" />
+                                        </svg>
+                                    </div>
+                                    <span class="winding-label">2. Ayak Dış</span>
+                                </label>
+                                <!-- Pozisyon 3: Sağ Dış -->
+                                <label class="winding-option" onclick="selectWinding(3)">
+                                    <input type="radio" name="winding" value="3">
+                                    <div class="winding-icon">
+                                        <svg viewBox="0 0 60 40">
+                                            <circle cx="20" cy="20" r="12" fill="#f1f5f9" stroke="#94a3b8"
+                                                stroke-width="1.5" />
+                                            <circle cx="20" cy="20" r="4" fill="#cbd5e1" stroke="#94a3b8"
+                                                stroke-width="1" />
+                                            <line x1="20" y1="8" x2="55" y2="8" stroke="#64748b" stroke-width="2" />
+                                            <rect x="36" y="4" width="10" height="8" fill="var(--primary)" rx="1" />
+                                            <text x="41" y="11" font-size="8" font-weight="bold" text-anchor="middle"
+                                                fill="white" font-family="Arial"
+                                                transform="rotate(-90, 41, 10)">A</text>
+                                            <path d="M12 12 A10 10 0 0 1 20 10" stroke="#10b981" stroke-width="2"
+                                                fill="none" marker-end="url(#arrow-head)" />
+                                        </svg>
+                                    </div>
+                                    <span class="winding-label">3. Sağ Dış</span>
+                                </label>
+                                <!-- Pozisyon 4: Sol Dış -->
+                                <label class="winding-option" onclick="selectWinding(4)">
+                                    <input type="radio" name="winding" value="4">
+                                    <div class="winding-icon">
+                                        <svg viewBox="0 0 60 40">
+                                            <circle cx="20" cy="20" r="12" fill="#f1f5f9" stroke="#94a3b8"
+                                                stroke-width="1.5" />
+                                            <circle cx="20" cy="20" r="4" fill="#cbd5e1" stroke="#94a3b8"
+                                                stroke-width="1" />
+                                            <line x1="20" y1="8" x2="55" y2="8" stroke="#64748b" stroke-width="2" />
+                                            <rect x="36" y="4" width="10" height="8" fill="var(--primary)" rx="1" />
+                                            <text x="41" y="11" font-size="8" font-weight="bold" text-anchor="middle"
+                                                fill="white" font-family="Arial" transform="rotate(90, 41, 10)">A</text>
+                                            <path d="M12 12 A10 10 0 0 1 20 10" stroke="#10b981" stroke-width="2"
+                                                fill="none" marker-end="url(#arrow-head)" />
+                                        </svg>
+                                    </div>
+                                    <span class="winding-label">4. Sol Dış</span>
+                                </label>
+                                <!-- Pozisyon 5: Kafa İç -->
+                                <label class="winding-option" onclick="selectWinding(5)">
+                                    <input type="radio" name="winding" value="5">
+                                    <div class="winding-icon">
+                                        <svg viewBox="0 0 60 40">
+                                            <circle cx="20" cy="20" r="12" fill="#f1f5f9" stroke="#94a3b8"
+                                                stroke-width="1.5" stroke-dasharray="2,1" />
+                                            <circle cx="20" cy="20" r="4" fill="#cbd5e1" stroke="#94a3b8"
+                                                stroke-width="1" />
+                                            <!-- Web (Bottom Unwind) -->
+                                            <line x1="20" y1="32" x2="55" y2="32" stroke="#64748b" stroke-width="2" />
+                                            <rect x="35" y="27" width="12" height="10" fill="var(--primary)" rx="1" />
+                                            <text x="41" y="35" font-size="8" font-weight="bold" text-anchor="middle"
+                                                fill="white" font-family="Arial">A</text>
+                                            <!-- Unwind Arrow -->
+                                            <path d="M12 28 A10 10 0 0 0 20 30" stroke="#10b981" stroke-width="2"
+                                                fill="none" marker-end="url(#arrow-head)" />
+                                        </svg>
+                                    </div>
+                                    <span class="winding-label">5. Kafa İç</span>
+                                </label>
+                                <!-- Pozisyon 6: Ayak İç -->
+                                <label class="winding-option" onclick="selectWinding(6)">
+                                    <input type="radio" name="winding" value="6">
+                                    <div class="winding-icon">
+                                        <svg viewBox="0 0 60 40">
+                                            <circle cx="20" cy="20" r="12" fill="#f1f5f9" stroke="#94a3b8"
+                                                stroke-width="1.5" stroke-dasharray="2,1" />
+                                            <circle cx="20" cy="20" r="4" fill="#cbd5e1" stroke="#94a3b8"
+                                                stroke-width="1" />
+                                            <line x1="20" y1="32" x2="55" y2="32" stroke="#64748b" stroke-width="2" />
+                                            <rect x="35" y="27" width="12" height="10" fill="var(--primary)" rx="1" />
+                                            <text x="41" y="35" font-size="8" font-weight="bold" text-anchor="middle"
+                                                fill="white" font-family="Arial"
+                                                transform="rotate(180, 41, 34)">A</text>
+                                            <path d="M12 28 A10 10 0 0 0 20 30" stroke="#10b981" stroke-width="2"
+                                                fill="none" marker-end="url(#arrow-head)" />
+                                        </svg>
+                                    </div>
+                                    <span class="winding-label">6. Ayak İç</span>
+                                </label>
+                                <!-- Pozisyon 7: Sağ İç -->
+                                <label class="winding-option" onclick="selectWinding(7)">
+                                    <input type="radio" name="winding" value="7">
+                                    <div class="winding-icon">
+                                        <svg viewBox="0 0 60 40">
+                                            <circle cx="20" cy="20" r="12" fill="#f1f5f9" stroke="#94a3b8"
+                                                stroke-width="1.5" stroke-dasharray="2,1" />
+                                            <circle cx="20" cy="20" r="4" fill="#cbd5e1" stroke="#94a3b8"
+                                                stroke-width="1" />
+                                            <line x1="20" y1="32" x2="55" y2="32" stroke="#64748b" stroke-width="2" />
+                                            <rect x="36" y="28" width="10" height="8" fill="var(--primary)" rx="1" />
+                                            <text x="41" y="35" font-size="8" font-weight="bold" text-anchor="middle"
+                                                fill="white" font-family="Arial"
+                                                transform="rotate(-90, 41, 34)">A</text>
+                                            <path d="M12 28 A10 10 0 0 0 20 30" stroke="#10b981" stroke-width="2"
+                                                fill="none" marker-end="url(#arrow-head)" />
+                                        </svg>
+                                    </div>
+                                    <span class="winding-label">7. Sağ İç</span>
+                                </label>
+                                <!-- Pozisyon 8: Sol İç -->
+                                <label class="winding-option" onclick="selectWinding(8)">
+                                    <input type="radio" name="winding" value="8">
+                                    <div class="winding-icon">
+                                        <svg viewBox="0 0 60 40">
+                                            <circle cx="20" cy="20" r="12" fill="#f1f5f9" stroke="#94a3b8"
+                                                stroke-width="1.5" stroke-dasharray="2,1" />
+                                            <circle cx="20" cy="20" r="4" fill="#cbd5e1" stroke="#94a3b8"
+                                                stroke-width="1" />
+                                            <line x1="20" y1="32" x2="55" y2="32" stroke="#64748b" stroke-width="2" />
+                                            <rect x="36" y="28" width="10" height="8" fill="var(--primary)" rx="1" />
+                                            <text x="41" y="35" font-size="8" font-weight="bold" text-anchor="middle"
+                                                fill="white" font-family="Arial" transform="rotate(90, 41, 34)">A</text>
+                                            <path d="M12 28 A10 10 0 0 0 20 30" stroke="#10b981" stroke-width="2"
+                                                fill="none" marker-end="url(#arrow-head)" />
+                                            <defs>
+                                                <marker id="arrow-head" markerWidth="6" markerHeight="6" refX="3"
+                                                    refY="3" orientation="auto">
+                                                    <path d="M0,0 L6,3 L0,6 Z" fill="#10b981" />
+                                                </marker>
+                                            </defs>
+                                        </svg>
+                                    </div>
+                                    <span class="winding-label">8. Sol İç</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 10px;">
+                            <label for="core-size">Kuka (mm)</label>
+                            <input type="number" id="core-size" min="1" placeholder="40, 76 vb." value="76" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="quantity">Sipariş Adeti</label>
+                            <input type="number" id="quantity" min="1" placeholder="1000" required />
+                        </div>
+
+                        <!-- Ink Cost Section -->
+                        <div class="form-group"
+                            style="padding:10px; background:rgba(var(--primary-rgb), 0.03); border:1px solid var(--border); border-radius:8px;">
+                            <label style="font-weight:600; margin-bottom:8px; display:block;">Mürekkep Maliyeti
+                                (Opsiyonel)</label>
+                            <div class="form-row half" style="margin-bottom:0;">
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label for="ink-consumption" style="font-size:0.9em;">Tüketim (ml/m²)</label>
+                                    <input type="number" id="ink-consumption" step="0.1" placeholder="Ort. 10"
+                                        value="0" />
+                                </div>
+                                <div class="form-group" style="margin-bottom:0;">
+                                    <label for="ink-price" style="font-size:0.9em;">Litre Fiyatı</label>
+                                    <div class="form-row" style="gap:5px; align-items:center;">
+                                        <input type="number" id="ink-price" step="0.1" placeholder="0" />
+                                        <div class="select-wrapper" style="width: 85px;">
+                                            <select id="ink-currency"
+                                                style="padding: 0.5rem; padding-right: 1.5rem; font-size: 0.9em;">
+                                                <option value="EUR" selected>€</option>
+                                                <option value="USD">$</option>
+                                                <option value="TL">₺</option>
+                                            </select>
+                                            <i data-feather="chevron-down" class="select-icon"
+                                                style="right: 5px; width: 14px;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="material">Malzeme Seçimi</label>
+                            <div class="select-wrapper">
+                                <select id="material" required>
+                                    <option value="" disabled selected>Yükleniyor...</option>
+                                </select>
+                                <i data-feather="chevron-down" class="select-icon"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-row thirds" style="display:flex;">
+                            <div class="form-group" style="flex:2;">
+                                <label for="custom-price">Malzeme Birim Fiyat (m²)</label>
+                                <input type="number" id="custom-price" step="0.01" min="0" placeholder="0.00"
+                                    required />
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <label for="currency">Para Birimi</label>
+                                <div class="select-wrapper">
+                                    <select id="currency">
+                                        <option value="EUR" selected>€ Euro</option>
+                                        <option value="USD">$ USD</option>
+                                        <option value="TL">₺ TL</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <label for="exchange-rate">Güncel Kur</label>
+                                <input type="number" id="exchange-rate" step="0.0001" min="0" placeholder="0.00"
+                                    value="34.00" />
+                            </div>
+                        </div>
+
+                        <button type="button" id="calc-btn" class="btn btn-primary btn-block"><i
+                                data-feather="refresh-cw"></i> Maliyet Hesapla</button>
+                    </form>
+
+                    <div id="result" class="result-panel hidden">
+                        <div class="result-row"><span>1 Adet Birim Maliyet:</span> <span><strong
+                                    id="unit-cost-per-label">0.0000</strong> <span
+                                    id="unit-currency-symbol">EUR</span></span></div>
+                        <div class="result-row"><span>Toplam Alan:</span> <span><strong id="area">0</strong> m²</span>
+                        </div>
+                        <div id="ink-result-row" class="result-row hidden" style="color:var(--primary);">
+                            <span>Toplam Baskı (Mürekkep):</span> <span style="font-size:0.95em;"><strong
+                                    id="total-ink-ml">0</strong> ml <small
+                                    style="color:var(--text-muted);">Tüketim</small></span>
+                        </div>
+                        <div class="result-row"><span>Toplam Vuruş:</span> <span><strong id="strokes">0</strong></span>
+                        </div>
+                        <div class="result-row"><span>Toplam Metre:</span> <span><strong id="linear-meters">0</strong>
+                                mt</span></div>
+                        <div class="result-row highlight"><span>Tahmini Tutar:</span> <span><strong
+                                    id="price">0.00</strong> <span id="currency-symbol">EUR</span></span></div>
+
+                        <div id="tl-equivalent-row" class="result-row hidden"
+                            style="color:var(--text-muted); font-size:0.95rem; border-top:none; margin-top:-0.5rem;">
+                            <div style="display:flex; justify-content:space-between; width:100%;">
+                                <span>TL Karşılığı:</span> <span><strong id="price-tl">0.00</strong> ₺</span>
+                            </div>
+                            <div
+                                style="display:flex; justify-content:space-between; width:100%; font-size:0.9em; margin-top:4px;">
+                                <span>(Birim: <strong id="unit-cost-tl">0.0000</strong> ₺)</span>
+                            </div>
+                        </div>
+
+                        <div class="button-group mt-1">
+                            <button id="download-pdf" class="btn btn-secondary btn-sm" style="flex:1"><i
+                                    data-feather="printer"></i> PDF İndir</button>
+                            <button id="download-csv" class="btn btn-outline btn-sm" style="flex:1"><i
+                                    data-feather="download"></i> Excel İndir</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: BOX CALCULATOR -->
+        <section id="view-box-calculator" class="page-view">
+            <div class="calculator-container">
+                <div class="tool-card calculator-card">
+                    <div class="tool-header">
+                        <div class="icon-box"><i data-feather="package"></i></div>
+                        <h3>Karton Kutu Hesaplayıcı</h3>
+                        <button id="box-reset-btn" type="button" class="btn btn-sm btn-outline"
+                            style="margin-left: auto; border: 1px solid var(--border); color: var(--text-muted);"
+                            title="Formu Sıfırla">
+                            <i data-feather="rotate-ccw"></i> Sıfırla
+                        </button>
+                    </div>
+
+                    <form id="box-form" class="calculator-form">
+                        <div class="form-row thirds" style="display:flex;">
+                            <div class="form-group" style="flex:1;">
+                                <label for="box-width">En (cm)</label>
+                                <input type="number" id="box-width" step="0.1" min="0" placeholder="10.0" />
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <label for="box-depth">Boy (cm)</label>
+                                <input type="number" id="box-depth" step="0.1" min="0" placeholder="5.0" />
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <label for="box-height">Yükseklik (cm)</label>
+                                <input type="number" id="box-height" step="0.1" min="0" placeholder="15.0" />
+                            </div>
+                        </div>
+
+                        <div class="form-group"
+                            style="padding:10px; background:var(--bg-body); border-radius:6px; border:1px dashed var(--border);">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <label style="font-size:0.85rem; color:var(--text-muted);">Tahmini Açık Ebat &
+                                    Şema</label>
+                                <span id="open-size-display"
+                                    style="font-weight:600; color:var(--primary); font-size:1rem;">-</span>
+                            </div>
+
+                            <!-- Box Drawing Container -->
+                            <div id="box-drawing-container" class="drawing-container hidden">
+                                <!-- SVG will be injected here -->
+                            </div>
+
+                            <div class="form-row half" style="margin-top:8px;">
+                                <input type="number" id="box-open-width" step="0.1" placeholder="Açık En (cm)"
+                                    title="Manuel düzenleyebilirsiniz">
+                                <input type="number" id="box-open-height" step="0.1" placeholder="Açık Boy (cm)"
+                                    title="Manuel düzenleyebilirsiniz">
+                            </div>
+                        </div>
+
+                        <!-- Printing Options -->
+                        <div class="form-group"
+                            style="margin-top:1rem; border-top:1px solid var(--border); padding-top:1rem;">
+                            <label
+                                style="margin-bottom:0.8rem; display:block; color:var(--text-main); font-weight:500;">Baskı
+                                Durumu</label>
+                            <div class="shape-switcher">
+                                <label class="shape-option active" id="btn-print-none">
+                                    <input type="radio" name="print-opt" value="none" checked
+                                        onchange="toggleBoxPrint('none')">
+                                    <i data-feather="slash" style="width:14px; vertical-align:middle;"></i> Baskısız
+                                </label>
+                                <label class="shape-option" id="btn-print-yes">
+                                    <input type="radio" name="print-opt" value="yes" onchange="toggleBoxPrint('yes')">
+                                    <i data-feather="printer" style="width:14px; vertical-align:middle;"></i> Baskılı
+                                </label>
+                            </div>
+
+                            <div id="print-cost-container" class="hidden">
+                                <label for="box-print-cost" style="font-size:0.9rem;">Toplam Baskı Maliyeti (Kalıp +
+                                    Baskı vs.)</label>
+                                <div class="form-row" style="display:flex; gap:0.5rem; align-items:center;">
+                                    <input type="number" id="box-print-cost" min="0" placeholder="0.00"
+                                        style="flex:1;" />
+                                    <span class="currency-label" style="font-weight:600; font-size:0.9rem;"
+                                        id="print-cost-currency-symbol">EUR</span>
+                                </div>
+                                <small style="color:var(--text-muted); font-size:0.8rem;">Bu tutar toplam sipariş
+                                    maliyetine eklenecektir.</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top:1rem;">
+                            <label for="box-quantity">Sipariş Adeti</label>
+                            <input type="number" id="box-quantity" min="1" placeholder="1000" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="box-material">Malzeme Seçimi</label>
+                            <div class="select-wrapper">
+                                <select id="box-material" required>
+                                    <option value="" disabled selected>Malzeme Seçiniz...</option>
+                                </select>
+                                <i data-feather="chevron-down" class="select-icon"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-row thirds" style="display:flex;">
+                            <div class="form-group" style="flex:2;">
+                                <label for="box-unit-price">Malzeme Birim Fiyat (m²)</label>
+                                <input type="number" id="box-unit-price" step="0.01" min="0" placeholder="0.00"
+                                    required />
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <label for="box-currency">Para Birimi</label>
+                                <div class="select-wrapper">
+                                    <select id="box-currency">
+                                        <option value="EUR" selected>€ Euro</option>
+                                        <option value="USD">$ USD</option>
+                                        <option value="TL">₺ TL</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" style="flex:1;">
+                                <label for="box-exchange-rate">Güncel Kur</label>
+                                <input type="number" id="box-exchange-rate" step="0.0001" min="0" placeholder="0.00"
+                                    value="34.00" />
+                            </div>
+                        </div>
+
+                        <button type="button" id="box-calc-btn" class="btn btn-primary btn-block"><i
+                                data-feather="refresh-cw"></i> Kutu Maliyeti Hesapla</button>
+                    </form>
+
+                    <div id="box-result" class="result-panel hidden">
+                        <div class="result-row"><span>1 Adet Birim Maliyet:</span> <span><strong
+                                    id="box-unit-cost">0.0000</strong> <span
+                                    id="box-res-currency-symbol">EUR</span></span></div>
+                        <div class="result-row"><span>Toplam Malzeme Alanı:</span> <span><strong
+                                    id="box-total-area">0</strong> m²</span></div>
+
+                        <div id="print-result-row" class="result-row hidden">
+                            <span>Baskı Maliyeti (Ekstra):</span>
+                            <span><strong id="box-print-result">0.00</strong> <span class="box-curr-sym"></span></span>
+                        </div>
+
+                        <div class="result-row highlight"><span>Tahmini Toplam Tutar:</span> <span><strong
+                                    id="box-total-price">0.00</strong> <span
+                                    id="box-res-currency-symbol-2">EUR</span></span></div>
+
+                        <div id="box-tl-row" class="result-row hidden"
+                            style="color:var(--text-muted); font-size:0.95rem; border-top:none; margin-top:-0.5rem;">
+                            <div style="display:flex; justify-content:space-between; width:100%;">
+                                <span>TL Karşılığı:</span> <span><strong id="box-price-tl">0.00</strong> ₺</span>
+                            </div>
+                            <div
+                                style="display:flex; justify-content:space-between; width:100%; font-size:0.9em; margin-top:4px;">
+                                <span>(Birim: <strong id="box-unit-cost-tl">0.0000</strong> ₺)</span>
+                            </div>
+                        </div>
+
+                        <div class="button-group mt-1">
+                            <button id="box-download-pdf" class="btn btn-secondary btn-sm" style="flex:1"><i
+                                    data-feather="printer"></i> PDF İndir</button>
+                            <button id="box-download-csv" class="btn btn-outline btn-sm" style="flex:1"><i
+                                    data-feather="download"></i> Excel İndir</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="print-area" class="print-only">
+        <div class="print-header">
+            <h1 id="print-area-title">Fiyat Teklif Raporu</h1>
+            <p id="print-date-display">Tarih: <span id="print-date"></span></p>
+        </div>
+
+        <!-- Label Print Table -->
+        <table class="print-table" id="print-table-label">
+            <tr>
+                <th>Firma / İş Adı</th>
+                <td id="print-job-name">-</td>
+            </tr>
+            <tr>
+                <th>Malzeme</th>
+                <td id="print-material">-</td>
+            </tr>
+            <tr>
+                <th>Etiket Boyutu</th>
+                <td id="print-dimensions">-</td>
+            </tr>
+            <tr>
+                <th>Ara Boşluk / Yerleşim</th>
+                <td id="print-layout">-</td>
+            </tr>
+            <tr>
+                <th>Baskı Türü</th>
+                <td id="print-type-display">-</td>
+            </tr>
+            <tr>
+                <th>Sarım Yönü</th>
+                <td id="print-winding">
+                    <div id="print-winding-text">-</div>
+                    <div id="print-winding-visual" style="margin-top: 10px; text-align: center;"></div>
+                </td>
+            </tr>
+            <tr>
+                <th>Kuka Çapı</th>
+                <td id="print-core">-</td>
+            </tr>
+            <tr>
+                <th>Adet / Vuruş</th>
+                <td id="print-quantity-strokes">-</td>
+            </tr>
+            <tr>
+                <th>Birim Fiyat (m²)</th>
+                <td id="print-unit-price">-</td>
+            </tr>
+            <tr>
+                <th>1 Adet Birim Maliyet</th>
+                <td id="print-unit-label-cost">-</td>
+            </tr>
+            <tr id="print-rate-row" class="hidden">
+                <th>Kullanılan Kur</th>
+                <td id="print-rate-val">-</td>
+            </tr>
+            <tr>
+                <th>Toplam Alan / Metre</th>
+                <td id="print-stats">-</td>
+            </tr>
+            <tr class="total-row">
+                <th>Toplam Tutar</th>
+                <td id="print-total">-</td>
+            </tr>
+            <tr id="print-tl-row" class="total-row hidden">
+                <th>TL Karşılığı</th>
+                <td id="print-tl-total">-</td>
+            </tr>
+        </table>
+
+        <!-- Box Print Table -->
+        <table class="print-table hidden" id="print-table-box">
+            <tr>
+                <th>Firma / İş Adı</th>
+                <td id="print-box-job-name">-</td>
+            </tr>
+            <tr>
+                <th>Kutu Ölçüleri (cm)</th>
+                <td id="print-box-dims">-</td>
+            </tr>
+            <tr>
+                <th>Açık Ebat (cm)</th>
+                <td id="print-box-open">-</td>
+            </tr>
+            <tr>
+                <th>Malzeme</th>
+                <td id="print-box-material">-</td>
+            </tr>
+            <tr>
+                <th>Sipariş Adeti</th>
+                <td id="print-box-qty">-</td>
+            </tr>
+            <tr>
+                <th>Baskı Durumu</th>
+                <td id="print-box-print-status">-</td>
+            </tr>
+            <tr>
+                <th>Malzeme Birim Fiyat (m²)</th>
+                <td id="print-box-unit-price">-</td>
+            </tr>
+            <tr>
+                <th>1 Adet Birim Maliyet</th>
+                <td id="print-box-unit-cost">-</td>
+            </tr>
+            <tr id="print-box-print-cost-row" class="hidden">
+                <th>Baskı Maliyeti</th>
+                <td id="print-box-print-cost">-</td>
+            </tr>
+            <tr id="print-box-rate-row" class="hidden">
+                <th>Kullanılan Kur</th>
+                <td id="print-box-rate">-</td>
+            </tr>
+            <tr class="total-row">
+                <th>Toplam Tutar</th>
+                <td id="print-box-total">-</td>
+            </tr>
+            <tr id="print-box-tl-row" class="total-row hidden">
+                <th>TL Karşılığı</th>
+                <td id="print-box-tl-total">-</td>
+            </tr>
+        </table>
+
+        <div class="print-footer">
+            <p>Matbaa Portalı Tarafından Oluşturulmuştur.</p>
         </div>
     </div>
 
-    <div class="background-glow"></div>
-    <div class="container">
-        <header>
-            <h1>ETİKET GENEL BİLGİLERİ</h1>
-            <p class="subtitle">yasin albostanlı</p>
-        </header>
-
-        <div id="page-calculator" class="page-section active">
-            <main class="calculator-card">
-                <div class="card-actions">
-                    <button id="resetBtn" class="reset-button">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12" />
-                        </svg>
-                        Sıfırla
-                    </button>
-                </div>
-
-                <!-- Section 1: Dimensions & Quantity -->
-                <div class="input-row">
-                    <div class="input-group">
-                        <label for="labelWidth">Akış (mm)</label>
-                        <div class="input-wrapper">
-                            <input type="number" id="labelWidth" placeholder="Örn: 100" min="0">
-                            <span class="unit">mm</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label for="flow">Ara Boşluğu (mm)</label>
-                    <div class="input-wrapper">
-                        <input type="number" id="flow" placeholder="Örn: 3" min="0" value="3">
-                        <span class="unit">mm</span>
-                    </div>
-                    <small class="hint">Etiket arası boşluk genellikle 3mm'dir.</small>
-                </div>
-
-                <div class="input-group">
-                    <label for="zMeasure">Makine ZET Ölçüsü</label>
-                    <div class="input-wrapper">
-                        <select id="zMeasure">
-                            <option value="">Hesaplanıyor...</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="input-row">
-                    <div class="input-group">
-                        <label for="quantity">Sipariş Adeti</label>
-                        <div class="input-wrapper">
-                            <input type="number" id="quantity" placeholder="10000" min="0">
-                            <span class="unit">Adet</span>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="across">Yanyana</label>
-                        <div class="input-wrapper">
-                            <input type="number" id="across" placeholder="1" min="1" value="1">
-                            <span class="unit">Adet</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Intermediate Results: Technical -->
-                <div class="intermediate-results">
-                    <div class="result-item">
-                        <span class="result-label">Toplam Vuruş</span>
-                        <div class="result-value" id="totalStrokes">0</div>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Toplam Metraj</span>
-                        <div class="result-value" id="totalLength">0 <span class="unit-small">m</span></div>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Toplam Alan</span>
-                        <div class="result-value" id="totalAreaM2">0 <span class="unit-small">m²</span></div>
-                    </div>
-                </div>
-
-                <!-- Section 2: Production Speed & Ink -->
-                <div class="input-row">
-                    <div class="input-group">
-                        <label for="speed">Makine Hızı</label>
-                        <div class="input-wrapper">
-                            <input type="number" id="speed" placeholder="50" min="1">
-                            <span class="unit">m/dk</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Intermediate Results: Production -->
-                <div class="intermediate-results">
-                    <div class="result-item">
-                        <span class="result-label">Tahmini Süre</span>
-                        <div class="result-value" id="totalTime">0 <span class="unit-small">dk</span></div>
-                    </div>
-                </div>
-
-                <button id="goToPaperBtn" class="action-button full-width">
-                    İş Emrine Git &rarr;
-                </button>
-
-            </main>
+    <footer class="footer" style="padding: 2rem 5%; margin-top: auto;">
+        <div class="footer-bottom">
+            <p>&copy; <span id="year"></span> Matbaa Portalı.</p>
         </div>
+    </footer>
 
-        <!-- Page 3: Paper Calculation -->
-        <div id="page-paper-cost" class="page-section hidden">
-            <main class="calculator-card">
-                <button id="backToCalcBtn" class="reset-button"
-                    style="position:relative; margin-bottom:1rem; right:auto; top:auto;">
-                    &larr; Geri Dön
-                </button>
-
-                <h2>İş Emri</h2>
-
-                <div class="input-group">
-                    <label for="jobName">İşin Adı</label>
-                    <div class="input-wrapper">
-                        <input type="text" id="jobName" placeholder="Örn: Firma / Ürün Adı">
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label for="colorOption">Renk Seçeneği</label>
-                    <div class="input-wrapper">
-                        <select id="colorOption">
-                            <option value="CMYK">CMYK</option>
-                            <option value="WCMYK">WCMYK</option>
-                            <option value="WCMYK+OVG">WCMYK+OVG</option>
-                            <option value="WCMYK+LAK">WCMYK+LAK</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label for="materialType">Malzeme Cinsi</label>
-                    <div class="input-wrapper">
-                        <select id="materialType">
-                            <option value="Kuşe">Kuşe</option>
-                            <option value="Termal">Termal (Eko)</option>
-                            <option value="Lamine Termal">Lamine Termal</option>
-                            <option value="PP Opak">PP Opak</option>
-                            <option value="PP Şeffaf">PP Şeffaf</option>
-                            <option value="PE Opak">PE Opak</option>
-                            <option value="PE Şeffaf">PE Şeffaf</option>
-                            <option value="Silver Mat">Silver Mat (Demirbaş)</option>
-                            <option value="Whitetop">Whitetop (Vellum)</option>
-                            <option value="Metalize">Metalize</option>
-                            <option value="Kuşe (Pet)">Kuşe (Pet)</option>
-                            <option value="Fast Tyre">Fast Tyre (Kuşe)</option>
-                            <option value="Saten">Saten (Kumaş)</option>
-                            <option value="Japon Akmaz">Japon Akmaz</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label for="materialPrice">Malzeme Fiyatı (m²)</label>
-                    <div class="input-wrapper">
-                        <input type="number" id="materialPrice" placeholder="Örn: 1.50" min="0" step="0.01">
-                        <span class="unit">€</span>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label>Malzeme Toplam Tutar</label>
-                    <div class="input-wrapper">
-                        <input type="text" id="totalMaterialCost" readonly value="0.00">
-                        <span class="unit">€</span>
-                    </div>
-                </div>
-
-            </main>
-        </div>
-
-        <footer style="text-align: center; margin-top: 20px;">
-            <p>&copy; 2026 Etiket Pro</p>
-        </footer>
-    </div>
     <script src="script.js"></script>
     <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registration successful');
-                    })
-                    .catch(err => {
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
-            });
+        function switchPage(pageId) {
+            document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
+            const target = document.getElementById('view-' + pageId);
+            if (target) target.classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+
+            if (pageId === 'home') {
+                document.querySelector('.nav-link[onclick*="home"]').classList.add('active');
+            }
+
+            if (typeof feather !== 'undefined') feather.replace();
+        }
+
+        function toggleShape(shape) {
+            const rectInputs = document.getElementById('inputs-rect');
+            const circleInputs = document.getElementById('inputs-circle');
+            const btnRect = document.getElementById('shape-rect-label');
+            const btnCircle = document.getElementById('shape-circle-label');
+
+            if (shape === 'circle') {
+                rectInputs.classList.add('hidden');
+                circleInputs.classList.remove('hidden');
+                btnRect.classList.remove('active');
+                btnCircle.classList.add('active');
+            } else {
+                circleInputs.classList.add('hidden');
+                rectInputs.classList.remove('hidden');
+                btnCircle.classList.remove('active');
+                btnRect.classList.add('active');
+            }
+            if (typeof feather !== 'undefined') feather.replace();
+        }
+
+        function toggleBoxPrint(opt) {
+            const container = document.getElementById('print-cost-container');
+            const btnNone = document.getElementById('btn-print-none');
+            const btnYes = document.getElementById('btn-print-yes');
+            const costInput = document.getElementById('box-print-cost');
+
+            if (opt === 'yes') {
+                container.classList.remove('hidden');
+                btnNone.classList.remove('active');
+                btnYes.classList.add('active');
+            } else {
+                container.classList.add('hidden');
+                btnYes.classList.remove('active');
+                btnNone.classList.add('active');
+                if (costInput) costInput.value = '';
+            }
         }
     </script>
 </body>
