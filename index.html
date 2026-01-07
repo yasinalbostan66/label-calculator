@@ -128,7 +128,6 @@
         .header-time-container {
             display: flex;
             align-items: center;
-            gap: 12px;
             color: var(--text-main);
             font-variant-numeric: tabular-nums;
             font-weight: 500;
@@ -138,6 +137,10 @@
             border-radius: 0.5rem;
             border: 1px solid var(--border);
             height: 40px;
+        }
+
+        .clock-icon-desktop {
+            display: inline-block;
         }
 
         /* Radio Styling */
@@ -546,8 +549,126 @@
             }
         }
 
-        @media (max-width: 600px) {
+        /* STICKY HEADER & NAV FIX */
+        .header {
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 1100 !important;
+            background: var(--bg-surface) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            height: auto !important;
+            padding: 0 !important;
+            /* Managed by children padding */
+        }
 
+        .header-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 5%;
+            width: 100%;
+        }
+
+        .nav-bar {
+            width: 100%;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border);
+            border-top: 1px solid var(--border);
+            padding: 0 5%;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* MOBILE STICKY & COMPACT (max-width: 900px) */
+        @media (max-width: 900px) {
+            .header-top-bar {
+                padding: 0.75rem 1rem !important;
+                gap: 0.5rem !important;
+            }
+
+            .header-right {
+                flex-direction: row !important;
+                width: auto !important;
+                gap: 0.5rem !important;
+                margin: 0 !important;
+            }
+
+            .logo-wrapper {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 0 !important;
+            }
+
+            .dev-name {
+                display: block !important;
+                font-size: 0.75rem !important;
+                color: var(--primary) !important;
+                font-weight: 700 !important;
+                margin-top: -2px;
+            }
+
+            .live-rates {
+                width: 100% !important;
+                max-width: none !important;
+                justify-content: center !important;
+                background: var(--bg-body) !important;
+                border: none !important;
+                border-radius: 0 !important;
+                padding: 0.4rem 1rem !important;
+                height: auto !important;
+                font-size: 0.75rem !important;
+                display: flex !important;
+                gap: 1rem !important;
+            }
+
+            .theme-controls {
+                flex-direction: column !important;
+                height: auto !important;
+                gap: 2px !important;
+                align-items: center !important;
+            }
+
+            .theme-label-mobile {
+                display: block !important;
+                font-size: 0.65rem !important;
+                color: var(--text-muted) !important;
+                font-weight: 700 !important;
+            }
+
+            .header-time-container {
+                margin: 0 !important;
+                height: auto !important;
+                border: none !important;
+                background: none !important;
+                padding: 0 !important;
+            }
+
+            #header-time {
+                font-size: 0.65rem !important;
+                font-weight: 700 !important;
+                color: var(--text-muted) !important;
+            }
+
+            .clock-icon-desktop {
+                display: none !important;
+            }
+
+            /* Nav-bar mobile specific */
+            .nav-bar {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch !important;
+                justify-content: flex-start !important;
+                padding: 0 !important;
+            }
+
+            .nav-list {
+                gap: 1.25rem !important;
+                padding: 0 1rem !important;
+            }
+
+            /* Form stacking inside media query */
             .form-row,
             .form-row.thirds {
                 display: block !important;
@@ -571,103 +692,7 @@
             select {
                 width: 100% !important;
                 display: block !important;
-            }
-        }
-
-        .theme-label-mobile {
-            display: none;
-        }
-
-        @media (max-width: 900px) {
-
-            .live-rates,
-            .header-time-container {
-                display: block;
-                border: none;
-                background: none;
-                padding: 0;
-                height: auto;
-                margin-top: -5px;
-            }
-
-            #header-time {
-                font-size: 0.75rem !important;
-                display: block;
-                color: var(--text-muted);
-            }
-
-            .header {
-                flex-direction: column;
-                height: auto !important;
-                padding: 1rem 5% !important;
-                gap: 1rem;
-            }
-
-            .logo-wrapper {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .logo-titles {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .dev-name {
-                display: block;
-                font-size: 0.8rem;
-                color: var(--text-muted);
-                margin-top: -2px;
-                font-weight: 500;
-            }
-
-            .header-right {
-                flex-direction: column;
-                width: 100%;
-                gap: 12px;
-            }
-
-            .theme-label-mobile {
-                display: block;
-                font-size: 0.75rem;
-                color: var(--text-muted);
-                font-weight: 600;
-                margin-bottom: 2px;
-            }
-
-            .theme-controls {
-                flex-direction: column;
-                height: auto;
-                border: none;
-                background: none;
-                padding: 0;
-                gap: 4px;
-            }
-
-            .theme-group {
-                background: var(--bg-surface);
-                border: 1px solid var(--border);
-                border-radius: 2rem;
-                padding: 0 0.5rem;
-                height: 40px;
-            }
-
-            .live-rates {
-                display: flex !important;
-                width: 100%;
-                justify-content: center;
-            }
-
-            .nav-bar {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                justify-content: flex-start;
-            }
-
-            .nav-list {
-                gap: 1.5rem;
-                padding: 0 1rem;
+                height: 44px !important;
             }
         }
     </style>
@@ -675,70 +700,72 @@
 
 <body class="light">
 
-    <!-- Header -->
+    <!-- Header & Navigation Fixed Container -->
     <header class="header">
-        <div class="logo-container">
-            <div class="logo-wrapper">
-                <div class="logo-bg"><i data-feather="printer" class="logo-icon-white"></i></div>
-                <div class="logo-titles">
-                    <span class="logo-text">Matbaa<span class="highlight">Portalı</span></span>
-                    <span class="dev-name">Yasin Albostanlı</span>
+        <div class="header-top-bar">
+            <div class="logo-container">
+                <div class="logo-wrapper">
+                    <div class="logo-bg"><i data-feather="printer" class="logo-icon-white"></i></div>
+                    <div class="logo-titles">
+                        <span class="logo-text">Matbaa<span class="highlight">Portalı</span></span>
+                        <span class="dev-name">Yasin Albostanlı</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <!-- Theme Mode & Date Group for Mobile -->
+                <div class="theme-controls" title="Görünüm Modu">
+                    <span class="theme-label-mobile">Görünüm Modu</span>
+                    <div class="theme-group">
+                        <button class="mode-btn active" id="btn-light" title="Aydınlık Mod"><i data-feather="sun"
+                                width="20"></i></button>
+                        <button class="mode-btn" id="btn-dark" title="Karanlık Mod"><i data-feather="moon"
+                                width="20"></i></button>
+                    </div>
+                    <!-- Date inside theme controls for mobile grouping -->
+                    <div class="header-time-container">
+                        <i data-feather="clock" class="clock-icon-desktop" style="width:16px; margin-right:4px;"></i>
+                        <span id="header-time">...</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Header Right Section: Aligned Items -->
-        <div class="header-right">
-            <!-- Live Rates -->
-            <div id="live-rates-display" class="live-rates" title="Canlı Döviz Kurları">
-                <div class="rate-item"><span style="opacity:0.6;">Yükleniyor...</span></div>
-            </div>
-            <!-- Theme Mode Controls -->
-            <div class="theme-controls" title="Görünüm Modu">
-                <span class="theme-label-mobile">Görünüm Modu</span>
-                <div class="theme-group">
-                    <button class="mode-btn active" id="btn-light" title="Aydınlık Mod"><i data-feather="sun"
-                            width="20"></i></button>
-                    <button class="mode-btn" id="btn-dark" title="Karanlık Mod"><i data-feather="moon"
-                            width="20"></i></button>
-                </div>
-            </div>
-            <!-- Date/Time & Radio Display -->
-            <div class="header-time-container">
-
-                <i data-feather="clock" style="width:16px;"></i>
-                <span id="header-time" style="font-size:0.85rem;">...</span>
-            </div>
+        <!-- Live Rates Sub-bar -->
+        <div id="live-rates-display" class="live-rates" title="Canlı Döviz Kurları">
+            <div class="rate-item"><span style="opacity:0.6;">Yükleniyor...</span></div>
         </div>
+
+        <!-- Navigation Bar Inside Header -->
+        <nav class="nav-bar">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a class="nav-link active" onclick="switchPage('home')">
+                        <i data-feather="home"></i> Anasayfa
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="toggleMobileDropdown(this, event)">
+                        <i data-feather="grid"></i> <span class="nav-text">Hesaplayıcılar</span> <i
+                            data-feather="chevron-down" style="width:16px;"></i>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" onclick="switchPage('label-calculator')">
+                            <i data-feather="tag"
+                                style="width:16px; margin-right:8px; display:inline-block; vertical-align:middle;"></i>
+                            Etiket Fiyat Hesaplayıcı
+                        </a>
+                        <a class="dropdown-item" onclick="switchPage('box-calculator')">
+                            <i data-feather="package"
+                                style="width:16px; margin-right:8px; display:inline-block; vertical-align:middle;"></i>
+                            Karton Kutu Hesaplayıcı
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
     </header>
-
-    <!-- Navigation Bar -->
-    <nav class="nav-bar">
-        <ul class="nav-list">
-            <li class="nav-item">
-                <a class="nav-link active" onclick="switchPage('home')">
-                    <i data-feather="home"></i> Anasayfa
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" onclick="toggleMobileDropdown(this, event)">
-                    <i data-feather="grid"></i> Hesaplayıcılar <i data-feather="chevron-down" style="width:16px;"></i>
-                </a>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" onclick="switchPage('label-calculator')">
-                        <i data-feather="tag"
-                            style="width:16px; margin-right:8px; display:inline-block; vertical-align:middle;"></i>
-                        Etiket Fiyat Hesaplayıcı
-                    </a>
-                    <a class="dropdown-item" onclick="switchPage('box-calculator')">
-                        <i data-feather="package"
-                            style="width:16px; margin-right:8px; display:inline-block; vertical-align:middle;"></i>
-                        Karton Kutu Hesaplayıcı
-                    </a>
-                </div>
-            </li>
-        </ul>
-    </nav>
 
     <!-- Main Content Areas -->
     <main class="main-content">
