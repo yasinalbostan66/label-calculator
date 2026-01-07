@@ -579,6 +579,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if (boxCalcBtn) boxCalcBtn.addEventListener('click', calculateBoxResults);
 
     // --- 8.1 PLATE CALCULATOR LOGIC ---
+    const plateUnitPriceCm2 = document.getElementById('plate-unit-price');
+    const plateUnitPriceM2 = document.getElementById('plate-m2-price');
+
+    if (plateUnitPriceCm2 && plateUnitPriceM2) {
+        plateUnitPriceCm2.addEventListener('input', () => {
+            const cm2 = parseFloat(plateUnitPriceCm2.value) || 0;
+            plateUnitPriceM2.value = (cm2 * 10000).toFixed(2);
+        });
+
+        plateUnitPriceM2.addEventListener('input', () => {
+            const m2 = parseFloat(plateUnitPriceM2.value) || 0;
+            plateUnitPriceCm2.value = (m2 / 10000).toFixed(4);
+        });
+    }
+
+    if (plateIncludeFilm && plateFilmInputGroup) {
+        plateIncludeFilm.addEventListener('change', () => {
+            if (plateIncludeFilm.checked) plateFilmInputGroup.classList.remove('hidden');
+            else plateFilmInputGroup.classList.add('hidden');
+        });
+    }
+
     function calculatePlateResults() {
         const w = parseFloat(document.getElementById('plate-width').value) || 0;
         const h = parseFloat(document.getElementById('plate-height').value) || 0;
@@ -594,11 +616,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const singleAreaCm2 = (w * h) / 100;
         const totalAreaCm2 = singleAreaCm2 * qty;
-        const totalPrice = totalAreaCm2 * up;
+
+        let plateCost = totalAreaCm2 * up;
+        let filmCost = 0;
+
+        const isFilmEnabled = plateIncludeFilm ? plateIncludeFilm.checked : false;
+        if (isFilmEnabled) {
+            const filmUnitPrice = parseFloat(document.getElementById('plate-film-price').value) || 0;
+            filmCost = totalAreaCm2 * filmUnitPrice;
+        }
+
+        const totalPrice = plateCost + filmCost;
 
         document.getElementById('plate-total-area').textContent = totalAreaCm2.toLocaleString('tr-TR', { maximumFractionDigits: 2 });
         document.getElementById('plate-total-price').textContent = totalPrice.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         document.getElementById('plate-res-currency-symbol').textContent = cur;
+
+        const filmRow = document.getElementById('plate-film-res-row');
+        const filmVal = document.getElementById('plate-film-cost');
+        if (isFilmEnabled) {
+            filmRow.classList.remove('hidden');
+            filmVal.textContent = filmCost.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 3 });
+            if (document.querySelector('.plate-curr-sym')) document.querySelector('.plate-curr-sym').textContent = cur;
+        } else {
+            filmRow.classList.add('hidden');
+        }
 
         const tlRow = document.getElementById('plate-tl-row');
         if (cur !== 'TL') {
@@ -682,19 +724,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // reset box
-    if (boxResetBtn) {
-        boxResetBtn.addEventListener('click', () => {
-            document.getElementById('box-form').reset();
-            if (document.getElementById('btn-print-none')) document.getElementById('btn-print-none').click();
-            boxResultPanel.classList.add('hidden');
-            const drawingContainer = document.getElementById('box-drawing-container');
-            if (drawingContainer) {
-                drawingContainer.classList.add('hidden');
-                drawingContainer.innerHTML = '';
-            }
-            if (document.getElementById('open-size-display')) document.getElementById('open-size-display').innerText = '-';
-            setTimeout(() => updateExchangeRateState(boxCurrencySelect, boxExchangeInput), 0);
+    // reset plate
+    const plateResetBtn = document.getElementById('plate-reset-btn');
+    if (plateResetBtn) {
+        plateResetBtn.addEventListener('click', () => {
+            const pForm = document.getElementById('plate-form');
+            if (pForm) pForm.reset();
+            const pRes = document.getElementById('plate-result-panel');
+            if (pRes) pRes.classList.add('hidden');
+            const pExch = document.getElementById('plate-exchange-rate');
+            const pCurr = document.getElementById('plate-currency');
+            const pFilmGroup = document.getElementById('plate-film-input-group');
+            if (pFilmGroup) pFilmGroup.classList.add('hidden');
+            setTimeout(() => updateExchangeRateState(pCurr, pExch), 0);
+        });
+    }
+
+    // reset raw material
+    const rawResetBtn = document.getElementById('raw-reset-btn');
+    if (rawResetBtn) {
+        rawResetBtn.addEventListener('click', () => {
+            const rForm = document.getElementById('raw-form');
+            if (rForm) rForm.reset();
+            const rRes = document.getElementById('raw-result-panel');
+            if (rRes) rRes.classList.add('hidden');
+            const rExch = document.getElementById('raw-exchange-rate');
+            const rCurr = document.getElementById('raw-currency');
+            setTimeout(() => updateExchangeRateState(rCurr, rExch), 0);
         });
     }
 
@@ -874,6 +930,15 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('print-plate-qty').innerText = qty + " Adet";
             document.getElementById('print-plate-unit-price').innerText = up + " " + cur + "/cm²";
             document.getElementById('print-plate-total-area').innerText = document.getElementById('plate-total-area').innerText + " cm²";
+
+            const printFilmRow = document.getElementById('print-plate-film-row');
+            if (document.getElementById('plate-include-film').checked) {
+                printFilmRow.classList.remove('hidden');
+                document.getElementById('print-plate-film-cost').innerText = document.getElementById('plate-film-cost').innerText + " " + cur;
+            } else {
+                printFilmRow.classList.add('hidden');
+            }
+
             document.getElementById('print-plate-total').innerText = document.getElementById('plate-total-price').innerText + " " + cur;
 
             if (cur !== 'TL') {

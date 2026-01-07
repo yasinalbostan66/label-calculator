@@ -1183,6 +1183,24 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Technical Info Card (From User Image) -->
+                <div class="tool-card mt-2" style="border-top: 4px solid var(--primary);">
+                    <div class="card-header">
+                        <div class="header-main">
+                            <i data-feather="info" class="text-primary"></i>
+                            <h3 style="margin:0; font-size:1.1rem;">Klişe Teknik Bilgi & Hesaplama</h3>
+                        </div>
+                    </div>
+
+                    </ul>
+                    <div
+                        style="background: rgba(var(--primary-rgb), 0.05); padding: 10px; border-radius: 6px; color: var(--text-main);">
+                        <strong>Sonuç:</strong> 4030 cm² x (0.01 + 0.0025) = <strong>50.375 Euro</strong> (Klişe +
+                        Film Toplam)
+                    </div>
+                </div>
+            </div>
             </div>
         </section>
 
@@ -1352,86 +1370,117 @@
             <section id="view-plate-calculator" class="page-view">
                 <div class="calculator-container">
                     <div class="tool-card calculator-card">
-                        <div class="card-header">
-                            <div class="header-main">
-                                <div class="header-icon"><i data-feather="layers"></i></div>
-                                <div>
-                                    <h2>Klişe Maliyet Hesaplayıcı</h2>
-                                    <p>Boyut, adet ve cm² fiyatı üzerinden klişe maliyeti hesaplayın.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card-body">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="plate-job-name">İş Adı / Açıklama</label>
-                                    <input type="text" id="plate-job-name" placeholder="Örn: 5 Renk Etiket Klişe Seti">
-                                </div>
-                            </div>
-
-                            <div class="form-row thirds">
-                                <div class="form-group">
-                                    <label for="plate-width">En (mm)</label>
-                                    <input type="number" id="plate-width" placeholder="0" min="0">
-                                </div>
-                                <div class="form-group">
-                                    <label for="plate-height">Boy (mm)</label>
-                                    <input type="number" id="plate-height" placeholder="0" min="0">
-                                </div>
-                                <div class="form-group">
-                                    <label for="plate-qty">Adet (Renk Sayısı)</label>
-                                    <input type="number" id="plate-qty" value="1" min="1">
-                                </div>
-                            </div>
-
-                            <div class="form-row thirds">
-                                <div class="form-group">
-                                    <label for="plate-unit-price">Birim Fiyat (cm²)</label>
-                                    <input type="number" id="plate-unit-price" placeholder="0.00" step="0.01">
-                                </div>
-                                <div class="form-group">
-                                    <label for="plate-currency">Para Birimi</label>
-                                    <select id="plate-currency">
-                                        <option value="USD">USD ($)</option>
-                                        <option value="EUR">EUR (€)</option>
-                                        <option value="TL">TL (₺)</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="plate-exchange-rate">Güncel Kur (₺)</label>
-                                    <input type="number" id="plate-exchange-rate" placeholder="1.0000" step="0.0001">
-                                </div>
-                            </div>
-
-                            <button id="plate-calc-btn" class="btn btn-primary w-full mt-1">
-                                <i data-feather="play"></i> Hesapla
+                        <div class="tool-header">
+                            <div class="icon-box"><i data-feather="layers"></i></div>
+                            <h3>Klişe Maliyet Hesaplayıcı</h3>
+                            <button id="plate-reset-btn" type="button" class="btn btn-sm btn-outline"
+                                style="margin-left: auto; border: 1px solid var(--border); color: var(--text-muted);"
+                                title="Formu Sıfırla">
+                                <i data-feather="rotate-ccw"></i> Sıfırla
                             </button>
                         </div>
 
-                        <div id="plate-result-panel" class="result-panel hidden mt-2">
-                            <h3 class="result-title">Hesaplama Özeti</h3>
+                        <form id="plate-form" class="calculator-form">
+                            <div class="card-body" style="padding: 0;">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="plate-job-name">İş Adı / Açıklama</label>
+                                        <input type="text" id="plate-job-name"
+                                            placeholder="Örn: 5 Renk Etiket Klişe Seti">
+                                    </div>
+                                </div>
 
-                            <div class="result-row">
-                                <span>Toplam Alan:</span> <span><strong id="plate-total-area">0.00</strong> cm²</span>
-                            </div>
-                            <div class="result-row total-row">
-                                <span>Toplam Tutar:</span> <span><strong id="plate-total-price">0.00</strong> <span
-                                        id="plate-res-currency-symbol">USD</span></span>
+                                <div class="form-row thirds">
+                                    <div class="form-group">
+                                        <label for="plate-width">En (mm)</label>
+                                        <input type="number" id="plate-width" placeholder="0" min="0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="plate-height">Boy (mm)</label>
+                                        <input type="number" id="plate-height" placeholder="0" min="0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="plate-qty">Adet (Renk Sayısı)</label>
+                                        <input type="number" id="plate-qty" value="1" min="1">
+                                    </div>
+                                </div>
+
+                                <div class="form-row thirds">
+                                    <div class="form-group">
+                                        <label for="plate-unit-price">Klişe Birim (cm²)</label>
+                                        <input type="number" id="plate-unit-price" placeholder="0.00" step="0.01">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="plate-currency">Para Birimi</label>
+                                        <select id="plate-currency">
+                                            <option value="USD">USD ($)</option>
+                                            <option value="EUR">EUR (€)</option>
+                                            <option value="TL">TL (₺)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="plate-exchange-rate">Güncel Kur (₺)</label>
+                                        <input type="number" id="plate-exchange-rate" placeholder="1.0000"
+                                            step="0.0001">
+                                    </div>
+                                </div>
+
+                                <!-- Film Cost Option -->
+                                <div class="form-row"
+                                    style="margin-top: 10px; padding: 10px; background: var(--bg-body); border-radius: 8px; border: 1px dashed var(--border);">
+                                    <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
+                                        <input type="checkbox" id="plate-include-film"
+                                            style="width: 20px; height: 20px; cursor: pointer;">
+                                        <label for="plate-include-film"
+                                            style="margin-bottom: 0; cursor: pointer; font-weight: 600;">Film Maliyeti
+                                            Ekle</label>
+                                    </div>
+                                    <div class="form-row mt-1" style="width: 100%; gap: 1rem;">
+                                        <div id="plate-film-input-group" class="hidden form-group" style="flex: 1;">
+                                            <label for="plate-film-price">Film Birim (cm²)</label>
+                                            <input type="number" id="plate-film-price" value="0.0025" step="0.0001">
+                                        </div>
+                                        <div class="form-group" style="flex: 1;">
+                                            <label for="plate-m2-price">Klişe Birim (m²)</label>
+                                            <input type="number" id="plate-m2-price" placeholder="0.00" step="0.01">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button id="plate-calc-btn" class="btn btn-primary w-full mt-1">
+                                    <i data-feather="play"></i> Hesapla
+                                </button>
                             </div>
 
-                            <div id="plate-tl-row" class="result-row hidden"
-                                style="color:var(--text-muted); font-size:0.95rem; border-top:none; margin-top:-0.5rem;">
-                                <div style="display:flex; justify-content:space-between; width:100%;">
-                                    <span>TL Karşılığı:</span> <span><strong id="plate-price-tl">0.00</strong> ₺</span>
+                            <div id="plate-result-panel" class="result-panel hidden mt-2">
+                                <h3 class="result-title">Hesaplama Özeti</h3>
+
+                                <div class="result-row">
+                                    <span>Klişe Alanı (Toplam):</span> <span><strong id="plate-total-area">0.00</strong>
+                                        cm²</span>
+                                </div>
+                                <div id="plate-film-res-row" class="result-row hidden">
+                                    <span>Film Maliyeti:</span> <span><strong id="plate-film-cost">0.00</strong> <span
+                                            class="plate-curr-sym">USD</span></span>
+                                </div>
+                                <div class="result-row total-row">
+                                    <span>Toplam Tutar:</span> <span><strong id="plate-total-price">0.00</strong> <span
+                                            id="plate-res-currency-symbol">USD</span></span>
+                                </div>
+
+                                <div id="plate-tl-row" class="result-row hidden"
+                                    style="color:var(--text-muted); font-size:0.95rem; border-top:none; margin-top:-0.5rem;">
+                                    <div style="display:flex; justify-content:space-between; width:100%;">
+                                        <span>TL Karşılığı:</span> <span><strong id="plate-price-tl">0.00</strong>
+                                            ₺</span>
+                                    </div>
+                                </div>
+
+                                <div class="button-group mt-1">
+                                    <button id="plate-download-pdf" class="btn btn-secondary btn-sm" style="flex:1"><i
+                                            data-feather="printer"></i> PDF İndir</button>
                                 </div>
                             </div>
-
-                            <div class="button-group mt-1">
-                                <button id="plate-download-pdf" class="btn btn-secondary btn-sm" style="flex:1"><i
-                                        data-feather="printer"></i> PDF İndir</button>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </section>
@@ -1440,89 +1489,92 @@
             <section id="view-raw-material-calculator" class="page-view">
                 <div class="calculator-container">
                     <div class="tool-card calculator-card">
-                        <div class="card-header">
-                            <div class="header-main">
-                                <div class="header-icon"><i data-feather="database"></i></div>
-                                <div>
-                                    <h2>Hammadde Hesaplayıcı</h2>
-                                    <p>Rulo metrajı, eni ve gramaj üzerinden ağırlık ve maliyet hesaplayın.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card-body">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="raw-job-name">İş Adı / Malzeme Notu</label>
-                                    <input type="text" id="raw-job-name" placeholder="Örn: 80gr Kuşe Rulo">
-                                </div>
-                            </div>
-
-                            <div class="form-row thirds">
-                                <div class="form-group">
-                                    <label for="raw-width">Rulo Eni (mm)</label>
-                                    <input type="number" id="raw-width" placeholder="0" min="0">
-                                </div>
-                                <div class="form-group">
-                                    <label for="raw-length">Metraj (m)</label>
-                                    <input type="number" id="raw-length" placeholder="0" min="0">
-                                </div>
-                                <div class="form-group">
-                                    <label for="raw-gsm">Gramaj (gr/m²)</label>
-                                    <input type="number" id="raw-gsm" placeholder="0" min="0">
-                                </div>
-                            </div>
-
-                            <div class="form-row thirds">
-                                <div class="form-group">
-                                    <label for="raw-unit-price">Birim Fiyat (kg)</label>
-                                    <input type="number" id="raw-unit-price" placeholder="0.00" step="0.01">
-                                </div>
-                                <div class="form-group">
-                                    <label for="raw-currency">Para Birimi</label>
-                                    <select id="raw-currency">
-                                        <option value="USD">USD ($)</option>
-                                        <option value="EUR">EUR (€)</option>
-                                        <option value="TL">TL (₺)</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="raw-exchange-rate">Güncel Kur (₺)</label>
-                                    <input type="number" id="raw-exchange-rate" placeholder="1.0000" step="0.0001">
-                                </div>
-                            </div>
-
-                            <button id="raw-calc-btn" class="btn btn-primary w-full mt-1">
-                                <i data-feather="play"></i> Hesapla
+                        <div class="tool-header">
+                            <div class="icon-box"><i data-feather="database"></i></div>
+                            <h3>Hammadde Hesaplayıcı</h3>
+                            <button id="raw-reset-btn" type="button" class="btn btn-sm btn-outline"
+                                style="margin-left: auto; border: 1px solid var(--border); color: var(--text-muted);"
+                                title="Formu Sıfırla">
+                                <i data-feather="rotate-ccw"></i> Sıfırla
                             </button>
                         </div>
 
-                        <div id="raw-result-panel" class="result-panel hidden mt-2">
-                            <h3 class="result-title">Hesaplama Özeti</h3>
+                        <form id="raw-form" class="calculator-form">
+                            <div class="card-body" style="padding: 0;">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="raw-job-name">İş Adı / Malzeme Notu</label>
+                                        <input type="text" id="raw-job-name" placeholder="Örn: 80gr Kuşe Rulo">
+                                    </div>
+                                </div>
 
-                            <div class="result-row">
-                                <span>Toplam Ağırlık:</span> <span><strong id="raw-total-weight">0.00</strong> kg</span>
-                            </div>
-                            <div class="result-row">
-                                <span>Toplam Alan:</span> <span><strong id="raw-total-area">0.00</strong> m²</span>
-                            </div>
-                            <div class="result-row total-row">
-                                <span>Toplam Tutar:</span> <span><strong id="raw-total-price">0.00</strong> <span
-                                        id="raw-res-currency-symbol">USD</span></span>
+                                <div class="form-row thirds">
+                                    <div class="form-group">
+                                        <label for="raw-width">Rulo Eni (mm)</label>
+                                        <input type="number" id="raw-width" placeholder="0" min="0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="raw-length">Metraj (m)</label>
+                                        <input type="number" id="raw-length" placeholder="0" min="0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="raw-gsm">Gramaj (gr/m²)</label>
+                                        <input type="number" id="raw-gsm" placeholder="0" min="0">
+                                    </div>
+                                </div>
+
+                                <div class="form-row thirds">
+                                    <div class="form-group">
+                                        <label for="raw-unit-price">Birim Fiyat (kg)</label>
+                                        <input type="number" id="raw-unit-price" placeholder="0.00" step="0.01">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="raw-currency">Para Birimi</label>
+                                        <select id="raw-currency">
+                                            <option value="USD">USD ($)</option>
+                                            <option value="EUR">EUR (€)</option>
+                                            <option value="TL">TL (₺)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="raw-exchange-rate">Güncel Kur (₺)</label>
+                                        <input type="number" id="raw-exchange-rate" placeholder="1.0000" step="0.0001">
+                                    </div>
+                                </div>
+
+                                <button id="raw-calc-btn" class="btn btn-primary w-full mt-1">
+                                    <i data-feather="play"></i> Hesapla
+                                </button>
                             </div>
 
-                            <div id="raw-tl-row" class="result-row hidden"
-                                style="color:var(--text-muted); font-size:0.95rem; border-top:none; margin-top:-0.5rem;">
-                                <div style="display:flex; justify-content:space-between; width:100%;">
-                                    <span>TL Karşılığı:</span> <span><strong id="raw-price-tl">0.00</strong> ₺</span>
+                            <div id="raw-result-panel" class="result-panel hidden mt-2">
+                                <h3 class="result-title">Hesaplama Özeti</h3>
+
+                                <div class="result-row">
+                                    <span>Toplam Ağırlık:</span> <span><strong id="raw-total-weight">0.00</strong>
+                                        kg</span>
+                                </div>
+                                <div class="result-row">
+                                    <span>Toplam Alan:</span> <span><strong id="raw-total-area">0.00</strong> m²</span>
+                                </div>
+                                <div class="result-row total-row">
+                                    <span>Toplam Tutar:</span> <span><strong id="raw-total-price">0.00</strong> <span
+                                            id="raw-res-currency-symbol">USD</span></span>
+                                </div>
+
+                                <div id="raw-tl-row" class="result-row hidden"
+                                    style="color:var(--text-muted); font-size:0.95rem; border-top:none; margin-top:-0.5rem;">
+                                    <div style="display:flex; justify-content:space-between; width:100%;">
+                                        <span>TL Karşılığı:</span> <span><strong id="raw-price-tl">0.00</strong>
+                                            ₺</span>
+                                    </div>
+                                </div>
+
+                                <div class="button-group mt-1">
+                                    <button id="raw-download-pdf" class="btn btn-secondary btn-sm" style="flex:1"><i
+                                            data-feather="printer"></i> PDF İndir</button>
                                 </div>
                             </div>
-
-                            <div class="button-group mt-1">
-                                <button id="raw-download-pdf" class="btn btn-secondary btn-sm" style="flex:1"><i
-                                        data-feather="printer"></i> PDF İndir</button>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </section>
@@ -1689,6 +1741,10 @@
             <tr>
                 <th>Toplam Alan</th>
                 <td id="print-plate-total-area">-</td>
+            </tr>
+            <tr id="print-plate-film-row" class="hidden">
+                <th>Film Maliyeti</th>
+                <td id="print-plate-film-cost">-</td>
             </tr>
             <tr class="total-row">
                 <th>Toplam Tutar</th>
