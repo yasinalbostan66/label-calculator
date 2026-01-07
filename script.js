@@ -131,7 +131,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 5. THEME LOGIC ---
     const btnLight = document.getElementById('btn-light');
     const btnDark = document.getElementById('btn-dark');
-    const storedTheme = localStorage.getItem('theme') || 'light';
+    
+    // Check system preference
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    function getStoredTheme() {
+        const stored = localStorage.getItem('theme');
+        if (stored) return stored;
+        return systemPrefersDark.matches ? 'dark' : 'light';
+    }
 
     function applyTheme(mode) {
         if (mode === 'dark') {
@@ -139,17 +147,38 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.remove('light');
             if (btnDark) btnDark.classList.add('active');
             if (btnLight) btnLight.classList.remove('active');
+            updateMetaTheme('#0f172a'); // --bg-body for dark
         } else {
             document.body.classList.add('light');
             document.body.classList.remove('dark');
             if (btnLight) btnLight.classList.add('active');
             if (btnDark) btnDark.classList.remove('active');
+            updateMetaTheme('#f3f4f6'); // --bg-body for light
         }
     }
-    applyTheme(storedTheme);
 
-    if (btnLight) btnLight.addEventListener('click', () => { applyTheme('light'); localStorage.setItem('theme', 'light'); });
-    if (btnDark) btnDark.addEventListener('click', () => { applyTheme('dark'); localStorage.setItem('theme', 'dark'); });
+    function updateMetaTheme(color) {
+        let meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', color);
+    }
+
+    applyTheme(getStoredTheme());
+
+    if (btnLight) btnLight.addEventListener('click', () => { 
+        applyTheme('light'); 
+        localStorage.setItem('theme', 'light'); 
+    });
+    if (btnDark) btnDark.addEventListener('click', () => { 
+        applyTheme('dark'); 
+        localStorage.setItem('theme', 'dark'); 
+    });
+
+    // Listen for system changes
+    systemPrefersDark.addEventListener('change', e => {
+        if (!localStorage.getItem('theme')) {
+            applyTheme(e.matches ? 'dark' : 'light');
+        }
+    });
 
     // --- 5.5 WINDING DIRECTION ---
     window.selectWinding = function (num) {

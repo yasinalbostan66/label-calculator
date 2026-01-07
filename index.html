@@ -14,6 +14,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="MatbaaPortalı">
+    <meta name="theme-color" content="#ffffff">
     <link rel="apple-touch-icon" href="favicon.svg">
 
     <!-- Fonts & Icons -->
@@ -73,7 +74,7 @@
             font-weight: 500;
             color: var(--text-muted);
             padding: 0.5rem 1rem;
-            background: rgba(var(--primary-rgb), 0.05);
+            background: var(--bg-body);
             border-radius: 0.5rem;
             border: 1px solid var(--border);
             height: 40px;
@@ -132,7 +133,7 @@
             font-variant-numeric: tabular-nums;
             font-weight: 500;
             font-size: 0.9rem;
-            background: var(--bg-surface);
+            background: var(--bg-body);
             padding: 0 1rem;
             border-radius: 0.5rem;
             border: 1px solid var(--border);
@@ -185,6 +186,8 @@
             padding: 0 5%;
             display: flex;
             justify-content: center;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .nav-list {
@@ -210,6 +213,7 @@
             cursor: pointer;
             transition: color 0.2s;
             border-bottom: 2px solid transparent;
+            white-space: nowrap;
         }
 
         .nav-link:hover,
@@ -417,7 +421,22 @@
 
         /* Exisiting Calc Styles */
         .calculator-container {
-            /*margin: 2rem auto;*/
+            width: 100%;
+        }
+
+        @media (max-width: 480px) {
+            .logo-text {
+                font-size: 1.1rem;
+            }
+
+            .logo-bg {
+                padding: 4px;
+            }
+
+            .logo-icon-white {
+                width: 18px;
+                height: 18px;
+            }
         }
 
         .form-row.thirds .form-group {
@@ -463,7 +482,7 @@
         .drawing-container {
             margin-top: 1rem;
             padding: 1rem;
-            background: #fff;
+            background: var(--bg-surface);
             border: 1px solid var(--border);
             border-radius: 8px;
             text-align: center;
@@ -493,12 +512,21 @@
         @media (max-width: 900px) {
 
             .live-rates,
-            .theme-controls {
+            .header-time-container {
                 display: none;
             }
 
             .header {
-                justify-content: center;
+                justify-content: space-between;
+                padding: 1rem 5%;
+            }
+
+            .header-right {
+                margin-left: 0;
+            }
+
+            .nav-list {
+                gap: 1rem;
             }
         }
     </style>

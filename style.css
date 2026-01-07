@@ -545,11 +545,12 @@ select {
     }
 
     .nav-list {
-        display: none;
+        display: flex;
+        gap: 1.5rem;
     }
 
     .mobile-menu-btn {
-        display: block;
+        display: none;
     }
 }
 
