@@ -131,10 +131,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 5. THEME LOGIC ---
     const btnLight = document.getElementById('btn-light');
     const btnDark = document.getElementById('btn-dark');
-    
+
     // Check system preference
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-    
+
     function getStoredTheme() {
         const stored = localStorage.getItem('theme');
         if (stored) return stored;
@@ -164,13 +164,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     applyTheme(getStoredTheme());
 
-    if (btnLight) btnLight.addEventListener('click', () => { 
-        applyTheme('light'); 
-        localStorage.setItem('theme', 'light'); 
+    if (btnLight) btnLight.addEventListener('click', () => {
+        applyTheme('light');
+        localStorage.setItem('theme', 'light');
     });
-    if (btnDark) btnDark.addEventListener('click', () => { 
-        applyTheme('dark'); 
-        localStorage.setItem('theme', 'dark'); 
+    if (btnDark) btnDark.addEventListener('click', () => {
+        applyTheme('dark');
+        localStorage.setItem('theme', 'dark');
     });
 
     // Listen for system changes
@@ -995,17 +995,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if (timeDisplay) {
         const updateTime = () => {
             const now = new Date();
-            timeDisplay.innerText = now.toLocaleString('tr-TR', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
+            const isMobile = window.innerWidth <= 900;
+
+            if (isMobile) {
+                // Formatting as Month/Day/Year (ay/gün/yıl)
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const year = now.getFullYear();
+                timeDisplay.innerText = `${month}/${day}/${year}`;
+            } else {
+                timeDisplay.innerText = now.toLocaleString('tr-TR', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
         };
         updateTime();
         setInterval(updateTime, 1000);
+        window.addEventListener('resize', updateTime);
     }
 
 

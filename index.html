@@ -574,20 +574,89 @@
             }
         }
 
+        .theme-label-mobile {
+            display: none;
+        }
+
         @media (max-width: 900px) {
 
             .live-rates,
             .header-time-container {
-                display: none;
+                display: block;
+                border: none;
+                background: none;
+                padding: 0;
+                height: auto;
+                margin-top: -5px;
+            }
+
+            #header-time {
+                font-size: 0.75rem !important;
+                display: block;
+                color: var(--text-muted);
             }
 
             .header {
-                justify-content: space-between;
-                padding: 1rem 5%;
+                flex-direction: column;
+                height: auto !important;
+                padding: 1rem 5% !important;
+                gap: 1rem;
+            }
+
+            .logo-wrapper {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .logo-titles {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .dev-name {
+                display: block;
+                font-size: 0.8rem;
+                color: var(--text-muted);
+                margin-top: -2px;
+                font-weight: 500;
             }
 
             .header-right {
-                margin-left: 0;
+                flex-direction: column;
+                width: 100%;
+                gap: 12px;
+            }
+
+            .theme-label-mobile {
+                display: block;
+                font-size: 0.75rem;
+                color: var(--text-muted);
+                font-weight: 600;
+                margin-bottom: 2px;
+            }
+
+            .theme-controls {
+                flex-direction: column;
+                height: auto;
+                border: none;
+                background: none;
+                padding: 0;
+                gap: 4px;
+            }
+
+            .theme-group {
+                background: var(--bg-surface);
+                border: 1px solid var(--border);
+                border-radius: 2rem;
+                padding: 0 0.5rem;
+                height: 40px;
+            }
+
+            .live-rates {
+                display: flex !important;
+                width: 100%;
+                justify-content: center;
             }
 
             .nav-bar {
@@ -609,8 +678,13 @@
     <!-- Header -->
     <header class="header">
         <div class="logo-container">
-            <div class="logo-bg"><i data-feather="printer" class="logo-icon-white"></i></div>
-            <span class="logo-text">Matbaa<span class="highlight">Portalı</span></span>
+            <div class="logo-wrapper">
+                <div class="logo-bg"><i data-feather="printer" class="logo-icon-white"></i></div>
+                <div class="logo-titles">
+                    <span class="logo-text">Matbaa<span class="highlight">Portalı</span></span>
+                    <span class="dev-name">Yasin Albostanlı</span>
+                </div>
+            </div>
         </div>
 
         <!-- Header Right Section: Aligned Items -->
@@ -621,6 +695,7 @@
             </div>
             <!-- Theme Mode Controls -->
             <div class="theme-controls" title="Görünüm Modu">
+                <span class="theme-label-mobile">Görünüm Modu</span>
                 <div class="theme-group">
                     <button class="mode-btn active" id="btn-light" title="Aydınlık Mod"><i data-feather="sun"
                             width="20"></i></button>
