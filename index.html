@@ -761,6 +761,16 @@
                                 style="width:16px; margin-right:8px; display:inline-block; vertical-align:middle;"></i>
                             Karton Kutu Hesaplayıcı
                         </a>
+                        <a class="dropdown-item" onclick="switchPage('plate-calculator')">
+                            <i data-feather="layers"
+                                style="width:16px; margin-right:8px; display:inline-block; vertical-align:middle;"></i>
+                            Klişe Maliyet Hesaplayıcı
+                        </a>
+                        <a class="dropdown-item" onclick="switchPage('raw-material-calculator')">
+                            <i data-feather="database"
+                                style="width:16px; margin-right:8px; display:inline-block; vertical-align:middle;"></i>
+                            Hammadde Hesaplayıcı
+                        </a>
                     </div>
                 </li>
             </ul>
@@ -781,15 +791,25 @@
                 <div class="tool-card-link" onclick="switchPage('label-calculator')">
                     <div class="tool-icon-large"><i data-feather="tag" width="32" height="32"></i></div>
                     <h3>Etiket Fiyat Hesaplayıcı</h3>
-                    <p>Rulo etiket maliyetlerinizi malzeme, işçilik ve döviz kurlarını kullanarak saniyeler içinde
-                        hesaplayın.</p>
+                    <p>Rulo etiket maliyetlerini malzeme, işçilik ve döviz kurlarını kullanarak hesaplayın.</p>
                 </div>
 
                 <div class="tool-card-link" onclick="switchPage('box-calculator')">
                     <div class="tool-icon-large"><i data-feather="package" width="32" height="32"></i></div>
                     <h3>Karton Kutu Hesaplayıcı</h3>
-                    <p>Amerikan Bristol, Oluklu Mukavva ve Kroma Karton kutu maliyetlerinizi açık ebat ölçüleriyle
-                        kolayca hesaplayın.</p>
+                    <p>Bristol, Oluklu Mukavva ve Kroma Karton kutu maliyetlerini açık ebat ölçüleriyle hesaplayın.</p>
+                </div>
+
+                <div class="tool-card-link" onclick="switchPage('plate-calculator')">
+                    <div class="tool-icon-large"><i data-feather="layers" width="32" height="32"></i></div>
+                    <h3>Klişe Maliyet Hesaplayıcı</h3>
+                    <p>Klişe alanı ve birim fiyat üzerinden hızlıca klişe maliyet raporu oluşturun.</p>
+                </div>
+
+                <div class="tool-card-link" onclick="switchPage('raw-material-calculator')">
+                    <div class="tool-icon-large"><i data-feather="database" width="32" height="32"></i></div>
+                    <h3>Hammadde Hesaplayıcı</h3>
+                    <p>Rulo metrajı, eni ve gramaj üzerinden toplam ağırlık ve tutarı hesaplayın.</p>
                 </div>
             </div>
         </section>
@@ -1328,15 +1348,206 @@
                     </div>
                 </div>
             </div>
-        </section>
+            <!-- VIEW: PLATE CALCULATOR -->
+            <section id="view-plate-calculator" class="page-view">
+                <div class="calculator-container">
+                    <div class="tool-card calculator-card">
+                        <div class="card-header">
+                            <div class="header-main">
+                                <div class="header-icon"><i data-feather="layers"></i></div>
+                                <div>
+                                    <h2>Klişe Maliyet Hesaplayıcı</h2>
+                                    <p>Boyut, adet ve cm² fiyatı üzerinden klişe maliyeti hesaplayın.</p>
+                                </div>
+                            </div>
+                        </div>
 
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="plate-job-name">İş Adı / Açıklama</label>
+                                    <input type="text" id="plate-job-name" placeholder="Örn: 5 Renk Etiket Klişe Seti">
+                                </div>
+                            </div>
+
+                            <div class="form-row thirds">
+                                <div class="form-group">
+                                    <label for="plate-width">En (mm)</label>
+                                    <input type="number" id="plate-width" placeholder="0" min="0">
+                                </div>
+                                <div class="form-group">
+                                    <label for="plate-height">Boy (mm)</label>
+                                    <input type="number" id="plate-height" placeholder="0" min="0">
+                                </div>
+                                <div class="form-group">
+                                    <label for="plate-qty">Adet (Renk Sayısı)</label>
+                                    <input type="number" id="plate-qty" value="1" min="1">
+                                </div>
+                            </div>
+
+                            <div class="form-row thirds">
+                                <div class="form-group">
+                                    <label for="plate-unit-price">Birim Fiyat (cm²)</label>
+                                    <input type="number" id="plate-unit-price" placeholder="0.00" step="0.01">
+                                </div>
+                                <div class="form-group">
+                                    <label for="plate-currency">Para Birimi</label>
+                                    <select id="plate-currency">
+                                        <option value="USD">USD ($)</option>
+                                        <option value="EUR">EUR (€)</option>
+                                        <option value="TL">TL (₺)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="plate-exchange-rate">Güncel Kur (₺)</label>
+                                    <input type="number" id="plate-exchange-rate" placeholder="1.0000" step="0.0001">
+                                </div>
+                            </div>
+
+                            <button id="plate-calc-btn" class="btn btn-primary w-full mt-1">
+                                <i data-feather="play"></i> Hesapla
+                            </button>
+                        </div>
+
+                        <div id="plate-result-panel" class="result-panel hidden mt-2">
+                            <h3 class="result-title">Hesaplama Özeti</h3>
+
+                            <div class="result-row">
+                                <span>Toplam Alan:</span> <span><strong id="plate-total-area">0.00</strong> cm²</span>
+                            </div>
+                            <div class="result-row total-row">
+                                <span>Toplam Tutar:</span> <span><strong id="plate-total-price">0.00</strong> <span
+                                        id="plate-res-currency-symbol">USD</span></span>
+                            </div>
+
+                            <div id="plate-tl-row" class="result-row hidden"
+                                style="color:var(--text-muted); font-size:0.95rem; border-top:none; margin-top:-0.5rem;">
+                                <div style="display:flex; justify-content:space-between; width:100%;">
+                                    <span>TL Karşılığı:</span> <span><strong id="plate-price-tl">0.00</strong> ₺</span>
+                                </div>
+                            </div>
+
+                            <div class="button-group mt-1">
+                                <button id="plate-download-pdf" class="btn btn-secondary btn-sm" style="flex:1"><i
+                                        data-feather="printer"></i> PDF İndir</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: RAW MATERIAL CALCULATOR -->
+            <section id="view-raw-material-calculator" class="page-view">
+                <div class="calculator-container">
+                    <div class="tool-card calculator-card">
+                        <div class="card-header">
+                            <div class="header-main">
+                                <div class="header-icon"><i data-feather="database"></i></div>
+                                <div>
+                                    <h2>Hammadde Hesaplayıcı</h2>
+                                    <p>Rulo metrajı, eni ve gramaj üzerinden ağırlık ve maliyet hesaplayın.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="raw-job-name">İş Adı / Malzeme Notu</label>
+                                    <input type="text" id="raw-job-name" placeholder="Örn: 80gr Kuşe Rulo">
+                                </div>
+                            </div>
+
+                            <div class="form-row thirds">
+                                <div class="form-group">
+                                    <label for="raw-width">Rulo Eni (mm)</label>
+                                    <input type="number" id="raw-width" placeholder="0" min="0">
+                                </div>
+                                <div class="form-group">
+                                    <label for="raw-length">Metraj (m)</label>
+                                    <input type="number" id="raw-length" placeholder="0" min="0">
+                                </div>
+                                <div class="form-group">
+                                    <label for="raw-gsm">Gramaj (gr/m²)</label>
+                                    <input type="number" id="raw-gsm" placeholder="0" min="0">
+                                </div>
+                            </div>
+
+                            <div class="form-row thirds">
+                                <div class="form-group">
+                                    <label for="raw-unit-price">Birim Fiyat (kg)</label>
+                                    <input type="number" id="raw-unit-price" placeholder="0.00" step="0.01">
+                                </div>
+                                <div class="form-group">
+                                    <label for="raw-currency">Para Birimi</label>
+                                    <select id="raw-currency">
+                                        <option value="USD">USD ($)</option>
+                                        <option value="EUR">EUR (€)</option>
+                                        <option value="TL">TL (₺)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="raw-exchange-rate">Güncel Kur (₺)</label>
+                                    <input type="number" id="raw-exchange-rate" placeholder="1.0000" step="0.0001">
+                                </div>
+                            </div>
+
+                            <button id="raw-calc-btn" class="btn btn-primary w-full mt-1">
+                                <i data-feather="play"></i> Hesapla
+                            </button>
+                        </div>
+
+                        <div id="raw-result-panel" class="result-panel hidden mt-2">
+                            <h3 class="result-title">Hesaplama Özeti</h3>
+
+                            <div class="result-row">
+                                <span>Toplam Ağırlık:</span> <span><strong id="raw-total-weight">0.00</strong> kg</span>
+                            </div>
+                            <div class="result-row">
+                                <span>Toplam Alan:</span> <span><strong id="raw-total-area">0.00</strong> m²</span>
+                            </div>
+                            <div class="result-row total-row">
+                                <span>Toplam Tutar:</span> <span><strong id="raw-total-price">0.00</strong> <span
+                                        id="raw-res-currency-symbol">USD</span></span>
+                            </div>
+
+                            <div id="raw-tl-row" class="result-row hidden"
+                                style="color:var(--text-muted); font-size:0.95rem; border-top:none; margin-top:-0.5rem;">
+                                <div style="display:flex; justify-content:space-between; width:100%;">
+                                    <span>TL Karşılığı:</span> <span><strong id="raw-price-tl">0.00</strong> ₺</span>
+                                </div>
+                            </div>
+
+                            <div class="button-group mt-1">
+                                <button id="raw-download-pdf" class="btn btn-secondary btn-sm" style="flex:1"><i
+                                        data-feather="printer"></i> PDF İndir</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
     </main>
 
     <div id="print-area" class="print-only">
         <div class="print-header">
-            <h1 id="print-area-title">Fiyat Teklif Raporu</h1>
-            <p id="print-date-display">Tarih: <span id="print-date"></span></p>
+            <div class="print-header-left">
+                <div class="print-logo">
+                    <div class="logo-bg"><i data-feather="printer" class="logo-icon-white"
+                            style="width:24px; height:24px;"></i></div>
+                    <span class="logo-text">Matbaa<span class="highlight">Portalı</span></span>
+                </div>
+                <p id="print-date-display">Tarih: <span id="print-date"></span></p>
+            </div>
+            <div class="print-header-center">
+                <h1 id="print-area-title">Fiyat Teklif Raporu</h1>
+            </div>
+            <div class="print-header-right">
+                <!-- Spacing balance -->
+            </div>
         </div>
+
+        <!-- Box Drawing in Print -->
+        <div id="print-box-drawing" class="print-box-drawing"></div>
 
         <!-- Label Print Table -->
         <table class="print-table" id="print-table-label">
@@ -1450,6 +1661,78 @@
             <tr id="print-box-tl-row" class="total-row hidden">
                 <th>TL Karşılığı</th>
                 <td id="print-box-tl-total">-</td>
+            </tr>
+        </table>
+
+        <!-- Plate Print Table -->
+        <table class="print-table hidden" id="print-table-plate">
+            <tr>
+                <th>İş Adı / Açıklama</th>
+                <td id="print-plate-job-name">-</td>
+            </tr>
+            <tr>
+                <th>En x Boy (mm)</th>
+                <td id="print-plate-dims">-</td>
+            </tr>
+            <tr>
+                <th>Adet (Renk Sayısı)</th>
+                <td id="print-plate-qty">-</td>
+            </tr>
+            <tr>
+                <th>Birim Fiyat (cm²)</th>
+                <td id="print-plate-unit-price">-</td>
+            </tr>
+            <tr id="print-plate-rate-row" class="hidden">
+                <th>Kullanılan Kur</th>
+                <td id="print-plate-rate">-</td>
+            </tr>
+            <tr>
+                <th>Toplam Alan</th>
+                <td id="print-plate-total-area">-</td>
+            </tr>
+            <tr class="total-row">
+                <th>Toplam Tutar</th>
+                <td id="print-plate-total">-</td>
+            </tr>
+            <tr id="print-plate-tl-row" class="total-row hidden">
+                <th>TL Karşılığı</th>
+                <td id="print-plate-tl-total">-</td>
+            </tr>
+        </table>
+
+        <!-- Raw Material Print Table -->
+        <table class="print-table hidden" id="print-table-raw">
+            <tr>
+                <th>İş Adı / Malzeme Notu</th>
+                <td id="print-raw-job-name">-</td>
+            </tr>
+            <tr>
+                <th>Rulo Ölçüleri (En x mt)</th>
+                <td id="print-raw-dims">-</td>
+            </tr>
+            <tr>
+                <th>Gramaj (gr/m²)</th>
+                <td id="print-raw-gsm">-</td>
+            </tr>
+            <tr>
+                <th>Birim Fiyat (kg)</th>
+                <td id="print-raw-unit-price">-</td>
+            </tr>
+            <tr id="print-raw-rate-row" class="hidden">
+                <th>Kullanılan Kur</th>
+                <td id="print-raw-rate">-</td>
+            </tr>
+            <tr>
+                <th>Toplam Ağırlık / Alan</th>
+                <td id="print-raw-stats">-</td>
+            </tr>
+            <tr class="total-row">
+                <th>Toplam Tutar</th>
+                <td id="print-raw-total">-</td>
+            </tr>
+            <tr id="print-raw-tl-row" class="total-row hidden">
+                <th>TL Karşılığı</th>
+                <td id="print-raw-tl-total">-</td>
             </tr>
         </table>
 

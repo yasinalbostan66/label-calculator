@@ -478,6 +478,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (boxDepth) boxDepth.addEventListener('input', updateBoxOpenSize);
     if (boxHeight) boxHeight.addEventListener('input', updateBoxOpenSize);
 
+    // Klişe & Raw Material Currency Listeners
+    const plateCurrency = document.getElementById('plate-currency');
+    const plateExchange = document.getElementById('plate-exchange-rate');
+    const rawCurrency = document.getElementById('raw-currency');
+    const rawExchange = document.getElementById('raw-exchange-rate');
+
+    if (plateCurrency && plateExchange) {
+        plateCurrency.addEventListener('change', () => updateExchangeRateState(plateCurrency, plateExchange));
+    }
+    if (rawCurrency && rawExchange) {
+        rawCurrency.addEventListener('change', () => updateExchangeRateState(rawCurrency, rawExchange));
+    }
+
     if (boxMaterialSelect) {
         boxMaterialSelect.addEventListener('change', () => {
             const val = boxMaterialSelect.value;
@@ -565,6 +578,83 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (boxCalcBtn) boxCalcBtn.addEventListener('click', calculateBoxResults);
 
+    // --- 8.1 PLATE CALCULATOR LOGIC ---
+    function calculatePlateResults() {
+        const w = parseFloat(document.getElementById('plate-width').value) || 0;
+        const h = parseFloat(document.getElementById('plate-height').value) || 0;
+        const qty = parseFloat(document.getElementById('plate-qty').value) || 1;
+        const up = parseFloat(document.getElementById('plate-unit-price').value) || 0;
+        const cur = document.getElementById('plate-currency').value;
+        const rate = parseFloat(document.getElementById('plate-exchange-rate').value) || 1;
+
+        if (!w || !h || !up) {
+            alert("Lütfen en, boy ve birim fiyat alanlarını doldurun.");
+            return;
+        }
+
+        const singleAreaCm2 = (w * h) / 100;
+        const totalAreaCm2 = singleAreaCm2 * qty;
+        const totalPrice = totalAreaCm2 * up;
+
+        document.getElementById('plate-total-area').textContent = totalAreaCm2.toLocaleString('tr-TR', { maximumFractionDigits: 2 });
+        document.getElementById('plate-total-price').textContent = totalPrice.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('plate-res-currency-symbol').textContent = cur;
+
+        const tlRow = document.getElementById('plate-tl-row');
+        if (cur !== 'TL') {
+            const totalPriceTL = totalPrice * rate;
+            document.getElementById('plate-price-tl').textContent = totalPriceTL.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            tlRow.classList.remove('hidden');
+        } else {
+            tlRow.classList.add('hidden');
+        }
+
+        document.getElementById('plate-result-panel').classList.remove('hidden');
+        document.getElementById('plate-result-panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    const plateCalcBtn = document.getElementById('plate-calc-btn');
+    if (plateCalcBtn) plateCalcBtn.addEventListener('click', calculatePlateResults);
+
+    // --- 8.2 RAW MATERIAL CALCULATOR LOGIC ---
+    function calculateRawMaterialResults() {
+        const w = parseFloat(document.getElementById('raw-width').value) || 0;
+        const l = parseFloat(document.getElementById('raw-length').value) || 0;
+        const gsm = parseFloat(document.getElementById('raw-gsm').value) || 0;
+        const up = parseFloat(document.getElementById('raw-unit-price').value) || 0;
+        const cur = document.getElementById('raw-currency').value;
+        const rate = parseFloat(document.getElementById('raw-exchange-rate').value) || 1;
+
+        if (!w || !l || !gsm || !up) {
+            alert("Lütfen en, metraj, gramaj ve birim fiyat alanlarını doldurun.");
+            return;
+        }
+
+        const totalAreaM2 = (w / 1000) * l;
+        const totalWeightKg = (totalAreaM2 * gsm) / 1000;
+        const totalPrice = totalWeightKg * up;
+
+        document.getElementById('raw-total-weight').textContent = totalWeightKg.toLocaleString('tr-TR', { maximumFractionDigits: 2 });
+        document.getElementById('raw-total-area').textContent = totalAreaM2.toLocaleString('tr-TR', { maximumFractionDigits: 2 });
+        document.getElementById('raw-total-price').textContent = totalPrice.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('raw-res-currency-symbol').textContent = cur;
+
+        const tlRow = document.getElementById('raw-tl-row');
+        if (cur !== 'TL') {
+            const totalPriceTL = totalPrice * rate;
+            document.getElementById('raw-price-tl').textContent = totalPriceTL.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            tlRow.classList.remove('hidden');
+        } else {
+            tlRow.classList.add('hidden');
+        }
+
+        document.getElementById('raw-result-panel').classList.remove('hidden');
+        document.getElementById('raw-result-panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    const rawCalcBtn = document.getElementById('raw-calc-btn');
+    if (rawCalcBtn) rawCalcBtn.addEventListener('click', calculateRawMaterialResults);
+
 
     // --- 9. LABEL LISTENERS ---
     if (form) {
@@ -622,9 +712,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const isCircle = radi ? radi.checked : false;
 
             const jobNameInput = document.getElementById('job-name');
-            const jobStr = jobNameInput && jobNameInput.value ? jobNameInput.value : "Fiyat Teklif Raporu";
-            if (document.getElementById('print-area-title')) document.getElementById('print-area-title').innerText = jobStr;
+            const jobStr = jobNameInput && jobNameInput.value ? jobNameInput.value : "Belirtilmedi";
+            if (document.getElementById('print-area-title')) document.getElementById('print-area-title').innerText = "Fiyat Teklif Raporu";
             if (document.getElementById('print-job-name')) document.getElementById('print-job-name').innerText = jobStr;
+
+            document.getElementById('print-box-drawing').classList.add('hidden'); // Only for box
 
             document.getElementById('print-date').innerText = new Date().toLocaleDateString('tr-TR');
             document.getElementById('print-material').innerText = select.value;
@@ -690,6 +782,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 printRateRow.classList.add('hidden');
             }
 
+            if (typeof feather !== 'undefined') feather.replace();
             window.print();
         });
     }
@@ -702,11 +795,20 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('print-table-box').classList.remove('hidden');
 
             const jobNameInput = document.getElementById('job-name');
-            const jobStr = jobNameInput && jobNameInput.value ? jobNameInput.value : "Fiyat Teklif Raporu";
-            if (document.getElementById('print-area-title')) document.getElementById('print-area-title').innerText = jobStr;
+            const jobStr = jobNameInput && jobNameInput.value ? jobNameInput.value : "Belirtilmedi";
+            if (document.getElementById('print-area-title')) document.getElementById('print-area-title').innerText = "Fiyat Teklif Raporu";
             if (document.getElementById('print-box-job-name')) document.getElementById('print-box-job-name').innerText = jobStr;
 
             document.getElementById('print-date').innerText = new Date().toLocaleDateString('tr-TR');
+
+            // Copy drawing to print area
+            const srcSvg = document.querySelector('.box-svg');
+            const printContainer = document.getElementById('print-box-drawing');
+            if (srcSvg && printContainer) {
+                printContainer.innerHTML = '';
+                printContainer.appendChild(srcSvg.cloneNode(true));
+                printContainer.classList.remove('hidden');
+            }
 
             // Populate Box Data
             const w = boxWidth.value; const d = boxDepth.value; const h = boxHeight.value;
@@ -744,6 +846,87 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('print-box-tl-row').classList.add('hidden');
             }
 
+            if (typeof feather !== 'undefined') feather.replace();
+            window.print();
+        });
+    }
+
+    // PLATE PDF
+    const platePrintBtn = document.getElementById('plate-download-pdf');
+    if (platePrintBtn) {
+        platePrintBtn.addEventListener('click', () => {
+            document.querySelectorAll('.print-table').forEach(t => t.classList.add('hidden'));
+            document.getElementById('print-table-plate').classList.remove('hidden');
+
+            const jobStr = document.getElementById('plate-job-name').value || "Belirtilmedi";
+            document.getElementById('print-area-title').innerText = "Fiyat Teklif Raporu";
+            document.getElementById('print-plate-job-name').innerText = jobStr;
+            document.getElementById('print-date').innerText = new Date().toLocaleDateString('tr-TR');
+
+            const w = document.getElementById('plate-width').value;
+            const h = document.getElementById('plate-height').value;
+            const qty = document.getElementById('plate-qty').value;
+            const up = document.getElementById('plate-unit-price').value;
+            const cur = document.getElementById('plate-currency').value;
+            const rate = document.getElementById('plate-exchange-rate').value;
+
+            document.getElementById('print-plate-dims').innerText = `${w} x ${h} mm`;
+            document.getElementById('print-plate-qty').innerText = qty + " Adet";
+            document.getElementById('print-plate-unit-price').innerText = up + " " + cur + "/cm²";
+            document.getElementById('print-plate-total-area').innerText = document.getElementById('plate-total-area').innerText + " cm²";
+            document.getElementById('print-plate-total').innerText = document.getElementById('plate-total-price').innerText + " " + cur;
+
+            if (cur !== 'TL') {
+                document.getElementById('print-plate-rate').innerText = rate + " ₺";
+                document.getElementById('print-plate-rate-row').classList.remove('hidden');
+                document.getElementById('print-plate-tl-total').innerText = document.getElementById('plate-price-tl').innerText + " ₺";
+                document.getElementById('print-plate-tl-row').classList.remove('hidden');
+            } else {
+                document.getElementById('print-plate-rate-row').classList.add('hidden');
+                document.getElementById('print-plate-tl-row').classList.add('hidden');
+            }
+
+            if (typeof feather !== 'undefined') feather.replace();
+            window.print();
+        });
+    }
+
+    // RAW MATERIAL PDF
+    const rawPrintBtn = document.getElementById('raw-download-pdf');
+    if (rawPrintBtn) {
+        rawPrintBtn.addEventListener('click', () => {
+            document.querySelectorAll('.print-table').forEach(t => t.classList.add('hidden'));
+            document.getElementById('print-table-raw').classList.remove('hidden');
+
+            const jobStr = document.getElementById('raw-job-name').value || "Belirtilmedi";
+            document.getElementById('print-area-title').innerText = "Fiyat Teklif Raporu";
+            document.getElementById('print-raw-job-name').innerText = jobStr;
+            document.getElementById('print-date').innerText = new Date().toLocaleDateString('tr-TR');
+
+            const w = document.getElementById('raw-width').value;
+            const l = document.getElementById('raw-length').value;
+            const gsm = document.getElementById('raw-gsm').value;
+            const up = document.getElementById('raw-unit-price').value;
+            const cur = document.getElementById('raw-currency').value;
+            const rate = document.getElementById('raw-exchange-rate').value;
+
+            document.getElementById('print-raw-dims').innerText = `${w} mm x ${l} mt`;
+            document.getElementById('print-raw-gsm').innerText = gsm + " gr/m²";
+            document.getElementById('print-raw-unit-price').innerText = up + " " + cur + "/kg";
+            document.getElementById('print-raw-stats').innerText = `${document.getElementById('raw-total-weight').innerText} kg / ${document.getElementById('raw-total-area').innerText} m²`;
+            document.getElementById('print-raw-total').innerText = document.getElementById('raw-total-price').innerText + " " + cur;
+
+            if (cur !== 'TL') {
+                document.getElementById('print-raw-rate').innerText = rate + " ₺";
+                document.getElementById('print-raw-rate-row').classList.remove('hidden');
+                document.getElementById('print-raw-tl-total').innerText = document.getElementById('raw-price-tl').innerText + " ₺";
+                document.getElementById('print-raw-tl-row').classList.remove('hidden');
+            } else {
+                document.getElementById('print-raw-rate-row').classList.add('hidden');
+                document.getElementById('print-raw-tl-row').classList.add('hidden');
+            }
+
+            if (typeof feather !== 'undefined') feather.replace();
             window.print();
         });
     }

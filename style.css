@@ -613,15 +613,69 @@ select {
     }
 
     .print-header {
-        text-align: center;
+        display: grid;
+        grid-template-columns: 1fr 1.5fr 1fr;
+        align-items: end;
         border-bottom: 2px solid #000;
-        padding-bottom: 0.3rem;
+        padding-bottom: 0.5rem;
         margin-bottom: 1rem;
+        text-align: left;
     }
 
+    .print-logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+    }
+
+    .print-logo .logo-text {
+        font-size: 14pt !important;
+        font-weight: 800 !important;
+        color: #000 !important;
+    }
+
+    .print-logo .highlight {
+        color: #3b82f6 !important;
+    }
+
+    .print-header-center {
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .print-header-right {
+        text-align: right;
+    }
+
+
     .print-header h1 {
-        font-size: 18pt;
+        font-size: 16pt !important;
         margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .print-header-left p {
+        margin: 0;
+        font-size: 9pt;
+        font-weight: 500;
+    }
+
+    .print-box-drawing {
+        text-align: center;
+        margin: 1rem 0;
+        padding: 1rem;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        background: #fff;
+    }
+
+    .print-box-drawing svg {
+        max-width: 100%;
+        height: auto;
     }
 
     .print-table {
