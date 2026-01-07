@@ -547,20 +547,30 @@
         }
 
         @media (max-width: 600px) {
-            .form-row {
-                flex-direction: column;
-                gap: 0;
+
+            .form-row,
+            .form-row.thirds {
+                display: block !important;
             }
 
             .form-group.half,
             .form-row.thirds .form-group {
-                width: 100%;
+                width: 100% !important;
+                margin-right: 0 !important;
+                margin-bottom: 1rem !important;
                 flex: none !important;
             }
 
             .form-group label {
                 min-height: auto !important;
-                margin-bottom: 4px;
+                margin-bottom: 6px !important;
+                display: block !important;
+            }
+
+            input,
+            select {
+                width: 100% !important;
+                display: block !important;
             }
         }
 
