@@ -240,6 +240,21 @@
             z-index: 100;
         }
 
+        .nav-item.active .dropdown-menu {
+            display: block;
+        }
+
+        @media (max-width: 900px) {
+            .nav-item.active .dropdown-menu {
+                position: static;
+                box-shadow: none;
+                border: none;
+                padding-left: 1rem;
+                background: var(--bg-body);
+                width: 100%;
+            }
+        }
+
         .winding-directions {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -319,6 +334,26 @@
         .nav-item:hover .dropdown-menu {
             display: block;
             animation: fadeIn 0.2s ease;
+        }
+
+        /* Form Alignment Fix */
+        .form-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 0px;
+        }
+
+        .form-group.half {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .form-group label {
+            min-height: 40px;
+            display: flex;
+            align-items: flex-end;
+            margin-bottom: 8px;
+            line-height: 1.2;
         }
 
         .dropdown-item {
@@ -439,12 +474,21 @@
             }
         }
 
+        /* Form Row Layout Improvements */
         .form-row.thirds .form-group {
-            margin-right: 1rem;
+            margin-right: 0;
+            flex: 1;
         }
 
-        .form-row.thirds .form-group:last-child {
-            margin-right: 0;
+        .form-group label {
+            min-height: 42px;
+            /* Consistency for multi-line labels */
+            display: flex;
+            align-items: flex-end;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
         }
 
         .shape-switcher {
@@ -574,7 +618,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link">
+                <a class="nav-link" onclick="toggleMobileDropdown(this)">
                     <i data-feather="grid"></i> Hesaplayıcılar <i data-feather="chevron-down" style="width:16px;"></i>
                 </a>
                 <div class="dropdown-menu">
@@ -1299,10 +1343,28 @@
             document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
 
             if (pageId === 'home') {
-                document.querySelector('.nav-link[onclick*="home"]').classList.add('active');
+                const homeLink = document.querySelector('.nav-link[onclick*="home"]');
+                if (homeLink) homeLink.classList.add('active');
+            } else {
+                // If sub-page, highlight the parent dropdown if needed or specific link
             }
 
+            // Close all dropdowns on page switch
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
             if (typeof feather !== 'undefined') feather.replace();
+        }
+
+        function toggleMobileDropdown(el) {
+            const parent = el.parentElement;
+            const isActive = parent.classList.contains('active');
+
+            // Close other dropdowns
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+
+            if (!isActive) {
+                parent.classList.add('active');
+            }
         }
 
         function toggleShape(shape) {
